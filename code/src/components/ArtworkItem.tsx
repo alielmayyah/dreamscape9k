@@ -28,11 +28,11 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
         }
       }}
       aria-label={`View frame ${index + 1}`}
-      className="group relative aspect-[16/9] w-full overflow-hidden rounded-[2px] bg-[#0e0e0e] cursor-pointer select-none focus:outline-none focus:ring-1 focus:ring-[#888]"
+      className="group relative aspect-[16/9] w-full overflow-hidden rounded-[2px] bg-[#000000] cursor-pointer select-none focus:outline-none focus:ring-1 focus:ring-[#888]"
     >
       {/* Skeleton / Placeholder */}
       {!loaded && (
-        <div className="absolute inset-0 bg-[#121212] animate-pulse" />
+        <div className="absolute inset-0 bg-[#080808] animate-pulse" />
       )}
 
       {/* Image */}

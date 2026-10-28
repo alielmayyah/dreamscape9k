@@ -23,7 +23,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#ededed] flex flex-col">
+    <div className="min-h-screen bg-[#000000] text-[#ededed] flex flex-col">
       {/* Discreet 56px Header */}
       <GalleryHeader
         totalCount={ARTWORKS_DATA.length}
