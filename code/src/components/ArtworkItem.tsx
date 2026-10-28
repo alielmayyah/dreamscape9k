@@ -27,7 +27,7 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
           onSelect(artwork, index);
         }
       }}
-      aria-label={`View ${artwork.title}`}
+      aria-label={`View frame ${index + 1}`}
       className="group relative aspect-[16/9] w-full overflow-hidden rounded-[2px] bg-[#0e0e0e] cursor-pointer select-none focus:outline-none focus:ring-1 focus:ring-[#888]"
     >
       {/* Skeleton / Placeholder */}
@@ -38,7 +38,7 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
       {/* Image */}
       <img
         src={artwork.thumb || artwork.src}
-        alt={artwork.alt || artwork.title}
+        alt={artwork.alt || `Frame ${index + 1}`}
         onLoad={() => setLoaded(true)}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
@@ -46,16 +46,6 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
           loaded ? 'opacity-100' : 'opacity-0'
         } transition-opacity duration-300`}
       />
-
-      {/* Discreet Hover Vignette & Tiny Title */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3.5 pointer-events-none">
-        <span className="text-[12px] text-[#ededed] font-light tracking-wide truncate max-w-[80%]">
-          {artwork.title}
-        </span>
-        <span className="text-[10px] text-[#888] font-mono tracking-wider">
-          {String(index + 1).padStart(2, '0')}
-        </span>
-      </div>
     </div>
   );
 };

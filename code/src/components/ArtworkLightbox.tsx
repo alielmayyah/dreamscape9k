@@ -85,7 +85,7 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`Artwork: ${artwork.title}`}
+      aria-label={`Frame ${currentIndex + 1} of ${totalCount}`}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/98 select-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -98,7 +98,7 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
       <button
         ref={closeButtonRef}
         onClick={onClose}
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 p-2.5 rounded-full text-[#888] hover:text-[#fff] hover:bg-[#1a1a1a] transition-colors focus:outline-none"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 p-2.5 rounded-full text-[#777] hover:text-[#fff] hover:bg-[#1a1a1a] transition-colors focus:outline-none"
         title="Close (Esc)"
         aria-label="Close lightbox"
       >
@@ -108,7 +108,7 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
       {/* Discreet Previous Button */}
       <button
         onClick={onPrev}
-        className="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-[#777] hover:text-[#fff] hover:bg-[#181818] transition-colors focus:outline-none"
+        className="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-[#666] hover:text-[#fff] hover:bg-[#181818] transition-colors focus:outline-none"
         title="Previous (Left Arrow)"
         aria-label="Previous artwork"
       >
@@ -118,7 +118,7 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
       {/* Discreet Next Button */}
       <button
         onClick={onNext}
-        className="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-[#777] hover:text-[#fff] hover:bg-[#181818] transition-colors focus:outline-none"
+        className="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-[#666] hover:text-[#fff] hover:bg-[#181818] transition-colors focus:outline-none"
         title="Next (Right Arrow)"
         aria-label="Next artwork"
       >
@@ -130,16 +130,14 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
         <img
           key={artwork.src}
           src={artwork.src}
-          alt={artwork.alt || artwork.title}
-          className="max-w-[96vw] max-h-[88vh] object-contain pointer-events-auto rounded-[2px] transition-opacity duration-300"
+          alt={artwork.alt || `Frame ${currentIndex + 1}`}
+          className="max-w-[96vw] max-h-[90vh] object-contain pointer-events-auto rounded-[2px] transition-opacity duration-300"
         />
 
-        {/* Minimal Bottom Label */}
+        {/* Minimal Subtle Counter Only */}
         <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center pointer-events-none">
-          <div className="flex items-center gap-2.5 px-3 py-1 bg-[#0f0f0f]/80 backdrop-blur-sm rounded border border-[#222] text-[11px] font-light text-[#aaa] tracking-wide pointer-events-auto">
-            <span className="text-[#eee]">{artwork.title}</span>
-            <span className="text-[#555] font-mono">/</span>
-            <span className="font-mono text-[#888]">{currentIndex + 1} of {totalCount}</span>
+          <div className="px-3 py-1 bg-[#0f0f0f]/80 backdrop-blur-sm rounded border border-[#222] text-[10px] font-mono text-[#777] tracking-wider pointer-events-auto">
+            {currentIndex + 1} / {totalCount}
           </div>
         </div>
       </div>
