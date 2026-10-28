@@ -57,3 +57,4 @@ export const CollectionFilters: React.FC<CollectionFiltersProps> = ({
     </div>
   );
 };
+

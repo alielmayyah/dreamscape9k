@@ -128,3 +128,4 @@ export const CinematicSequence: React.FC<CinematicSequenceProps> = ({
     </section>
   );
 };
+

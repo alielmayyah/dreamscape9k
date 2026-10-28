@@ -156,3 +156,4 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
     </article>
   );
 };
+

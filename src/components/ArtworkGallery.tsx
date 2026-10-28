@@ -81,3 +81,4 @@ export const ArtworkGallery: React.FC<ArtworkGalleryProps> = ({
     </section>
   );
 };
+

@@ -38,3 +38,4 @@ export interface Artwork {
   isSeries?: boolean;
   episodes?: Episode[];
 }
+

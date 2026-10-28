@@ -75,3 +75,4 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ totalCount }) => {
     </footer>
   );
 };
+

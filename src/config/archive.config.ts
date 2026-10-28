@@ -40,3 +40,4 @@ export const ARCHIVE_CONFIG = {
     licensing: "Unrestricted Editorial Exhibition",
   }
 };
+

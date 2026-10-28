@@ -20,3 +20,4 @@ export function useScrollLock(lock: boolean) {
     };
   }, [lock]);
 }
+

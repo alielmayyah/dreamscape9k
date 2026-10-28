@@ -280,3 +280,4 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
     </div>
   );
 };
+
