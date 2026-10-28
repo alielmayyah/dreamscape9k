@@ -71,20 +71,20 @@ export const ArtworkGrid: React.FC<ArtworkGridProps> = ({
     switch (gridCols) {
       case 1:
         return {
-          gridClass: 'grid-cols-1 gap-6 sm:gap-8 md:gap-10',
+          gridClass: 'grid-cols-1 gap-3 sm:gap-4 md:gap-5',
         };
       case 2:
         return {
-          gridClass: 'grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-5',
+          gridClass: 'grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3',
         };
       case 4:
         return {
-          gridClass: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-3.5',
+          gridClass: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5 sm:gap-2 md:gap-2',
         };
       case 3:
       default:
         return {
-          gridClass: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4',
+          gridClass: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 md:gap-2.5',
         };
     }
   };
