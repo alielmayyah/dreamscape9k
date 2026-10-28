@@ -9,4 +9,5 @@ export interface Artwork {
   height: number;
 }
 
-export type GridCols = 3 | 4;
+export type GridCols = 1 | 2 | 3 | 4;
+export type ThemeMode = 'dark' | 'light';

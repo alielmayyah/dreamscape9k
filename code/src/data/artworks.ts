@@ -300,5 +300,45 @@ export const ARTWORKS_DATA: Artwork[] = [
     "aspectRatio": "16:9",
     "width": 2752,
     "height": 1536
+  },
+  {
+    "id": "frame-031",
+    "title": "Frame 031",
+    "src": "images/artwork/Attendants_carrying_coffin_throu__40250229_2K.jpg",
+    "thumb": "images/thumbs/Attendants_carrying_coffin_throu__40250229_2K.webp",
+    "alt": "Cinematic frame 031",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
+  },
+  {
+    "id": "frame-032",
+    "title": "Frame 032",
+    "src": "images/artwork/Boy_spinning_carnival_prize_wheel_a67a8302_2K.jpg",
+    "thumb": "images/thumbs/Boy_spinning_carnival_prize_wheel_a67a8302_2K.webp",
+    "alt": "Cinematic frame 032",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
+  },
+  {
+    "id": "frame-033",
+    "title": "Frame 033",
+    "src": "images/artwork/Woman_merging_into_painted_mural_eed3e4f7_2K.jpg",
+    "thumb": "images/thumbs/Woman_merging_into_painted_mural_eed3e4f7_2K.webp",
+    "alt": "Cinematic frame 033",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
+  },
+  {
+    "id": "frame-034",
+    "title": "Frame 034",
+    "src": "images/artwork/Woman_with_prosthetics_sitting_down_2e56452e_2K.jpg",
+    "thumb": "images/thumbs/Woman_with_prosthetics_sitting_down_2e56452e_2K.webp",
+    "alt": "Cinematic frame 034",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
   }
 ];
