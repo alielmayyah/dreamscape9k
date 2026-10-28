@@ -1,9 +1,11 @@
 # Dependencies
+code/node_modules/
 node_modules/
 .pnp
 .pnp.js
 
 # Production build
+code/dist/
 dist/
 dist-ssr/
 *.local
@@ -31,9 +33,3 @@ Thumbs.db
 # Python
 __pycache__/
 *.py[cod]
-
-# Raw image files in root folder (kept locally, safe in public/images/artwork/)
-/*.jpg
-/*.jpeg
-/*.png
-/*.webp
