@@ -1,0 +1,17 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore loose raw images in the root folder (they are copied into images/)
+/*.jpg
+/*.jpeg
+/*.png
+/*.webp

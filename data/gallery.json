@@ -1,0 +1,300 @@
+{
+  "portfolio": {
+    "name": "Cinematic Stills & Visual Stories",
+    "tagline": "Narrative direction, atmospheric frames & visual fiction",
+    "categories": [
+      {
+        "id": "all",
+        "label": "All Frames"
+      },
+      {
+        "id": "series",
+        "label": "Narrative Trilogies"
+      },
+      {
+        "id": "atmosphere",
+        "label": "Atmosphere & Neo-Noir"
+      },
+      {
+        "id": "surreal",
+        "label": "Surreal & Character Stills"
+      },
+      {
+        "id": "portraits",
+        "label": "Vertical Cinema"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "series-the-hotel",
+      "type": "series",
+      "title": "The Hotel",
+      "subtitle": "A 3-Part Cinematic Narrative",
+      "category": "series",
+      "description": "A quiet, tense encounter unfolded along the liminal corridors of a mid-century hotel.",
+      "cover": "images/01_Hotel_Owner.jpg",
+      "cover_thumb": "images/thumbs/01_Hotel_Owner.webp",
+      "episodes": [
+        {
+          "act": "Act I",
+          "title": "The Hotel Owner",
+          "image": "images/01_Hotel_Owner.jpg",
+          "thumb": "images/thumbs/01_Hotel_Owner.webp",
+          "aspect": "16:9",
+          "caption": "Late evening behind the registration counter."
+        },
+        {
+          "act": "Act II",
+          "title": "The Guest",
+          "image": "images/02_The_Guest.jpg",
+          "thumb": "images/thumbs/02_The_Guest.webp",
+          "aspect": "16:9",
+          "caption": "Unpacking along the second-floor hall."
+        },
+        {
+          "act": "Act III",
+          "title": "The Keyhole",
+          "image": "images/03_The_Keyhole.jpg",
+          "thumb": "images/thumbs/03_The_Keyhole.webp",
+          "aspect": "16:9",
+          "caption": "Silent observation through room 204."
+        }
+      ]
+    },
+    {
+      "id": "series-the-taxi",
+      "type": "series",
+      "title": "The Taxi",
+      "subtitle": "A 3-Part Noir Journey",
+      "category": "series",
+      "description": "A nocturnal fare that leaves city limits and terminates under the moonlight in the pines.",
+      "cover": "images/01_The_Taxi.jpg",
+      "cover_thumb": "images/thumbs/01_The_Taxi.webp",
+      "episodes": [
+        {
+          "act": "Act I",
+          "title": "The Fare",
+          "image": "images/01_The_Taxi.jpg",
+          "thumb": "images/thumbs/01_The_Taxi.webp",
+          "aspect": "16:9",
+          "caption": "Headlights cutting through midnight fog."
+        },
+        {
+          "act": "Act II",
+          "title": "The Preparation",
+          "image": "images/02_The_Preparation.jpg",
+          "thumb": "images/thumbs/02_The_Preparation.webp",
+          "aspect": "16:9",
+          "caption": "The open trunk on the gravel shoulder."
+        },
+        {
+          "act": "Act III",
+          "title": "The Burial",
+          "image": "images/03_The_Burial.jpg",
+          "thumb": "images/thumbs/03_The_Burial.webp",
+          "aspect": "16:9",
+          "caption": "Deep amongst the roots."
+        }
+      ]
+    },
+    {
+      "id": "diner-wide",
+      "type": "single",
+      "title": "Midnight Diner",
+      "subtitle": "4K Cinematic Wide",
+      "category": "atmosphere",
+      "image": "images/diner_wide.png",
+      "thumb": "images/thumbs/diner_wide.webp",
+      "aspect": "16:9",
+      "description": "Amber warmth and vinyl booths in the desolate early hours."
+    },
+    {
+      "id": "gas-station",
+      "type": "single",
+      "title": "Neon Fuel Station",
+      "subtitle": "4K Cinematic Wide",
+      "category": "atmosphere",
+      "image": "images/gas_station.png",
+      "thumb": "images/thumbs/gas_station.webp",
+      "aspect": "16:9",
+      "description": "Fluorescent canopies buzzing against pitch black asphalt."
+    },
+    {
+      "id": "laundromat",
+      "type": "single",
+      "title": "24-Hour Laundromat",
+      "subtitle": "4K Cinematic Wide",
+      "category": "atmosphere",
+      "image": "images/laundromat.png",
+      "thumb": "images/thumbs/laundromat.webp",
+      "aspect": "16:9",
+      "description": "The quiet rhythm of drums spinning in empty neon light."
+    },
+    {
+      "id": "motel-wide",
+      "type": "single",
+      "title": "Bates Vista Motel",
+      "subtitle": "4K Cinematic Wide",
+      "category": "atmosphere",
+      "image": "images/motel.png",
+      "thumb": "images/thumbs/motel.webp",
+      "aspect": "16:9",
+      "description": "A vintage sanctuary for transient travellers."
+    },
+    {
+      "id": "solitary-pier",
+      "type": "single",
+      "title": "Fog Over The Pier",
+      "subtitle": "4K Cinematic Wide",
+      "category": "atmosphere",
+      "image": "images/pier.png",
+      "thumb": "images/thumbs/pier.webp",
+      "aspect": "16:9",
+      "description": "Wooden pylons fading into coastal vapor."
+    },
+    {
+      "id": "motel-room-dawn",
+      "type": "single",
+      "title": "Empty Room at Dawn",
+      "subtitle": "2K Still",
+      "category": "atmosphere",
+      "image": "images/Empty_motel_room_at_dawn_2K_20261026175801.jpg",
+      "thumb": "images/thumbs/Empty_motel_room_at_dawn_2K_20261026175801.webp",
+      "aspect": "16:9",
+      "description": "Morning amber raking across Venetian blinds."
+    },
+    {
+      "id": "couple-fueling",
+      "type": "single",
+      "title": "Late Night Transit",
+      "subtitle": "2K Still",
+      "category": "atmosphere",
+      "image": "images/Couple_fueling_car_at_station_2K_20261026201551.jpg",
+      "thumb": "images/thumbs/Couple_fueling_car_at_station_2K_20261026201551.webp",
+      "aspect": "16:9",
+      "description": "A pause for fuel before the state line."
+    },
+    {
+      "id": "crocodile-dentist",
+      "type": "single",
+      "title": "The Reptilian Patient",
+      "subtitle": "Surreal Stills",
+      "category": "surreal",
+      "image": "images/Dentist_examines_crocodile_teeth_1042c9dd_2K.jpg",
+      "thumb": "images/thumbs/Dentist_examines_crocodile_teeth_1042c9dd_2K.webp",
+      "aspect": "16:9",
+      "description": "A meticulous oral examination under surgical lamps."
+    },
+    {
+      "id": "submerged-sax",
+      "type": "single",
+      "title": "Solo in Submerged Minor",
+      "subtitle": "Surreal Stills",
+      "category": "surreal",
+      "image": "images/Saxophonist_playing_in_flooded_b__9f5c6de1_2K_1_.jpg",
+      "thumb": "images/thumbs/Saxophonist_playing_in_flooded_b__9f5c6de1_2K_1_.webp",
+      "aspect": "16:9",
+      "description": "Brass resonance bouncing across ankle-deep waters."
+    },
+    {
+      "id": "phone-booth-giant",
+      "type": "single",
+      "title": "The Midnight Call",
+      "subtitle": "Surreal Stills",
+      "category": "surreal",
+      "image": "images/Giant_man_using_phone_booth_d05b8b59_2K.jpg",
+      "thumb": "images/thumbs/Giant_man_using_phone_booth_d05b8b59_2K.webp",
+      "aspect": "16:9",
+      "description": "Architecture overwhelmed by human proportion."
+    },
+    {
+      "id": "royal-command",
+      "type": "single",
+      "title": "The Royal Decree",
+      "subtitle": "Character Stills",
+      "category": "surreal",
+      "image": "images/Girl_issuing_royal_command_7aedcbd5_2K.jpg",
+      "thumb": "images/thumbs/Girl_issuing_royal_command_7aedcbd5_2K.webp",
+      "aspect": "16:9",
+      "description": "An unyielding decree issued from the high chair."
+    },
+    {
+      "id": "bank-cleaner",
+      "type": "single",
+      "title": "The Marble Vault",
+      "subtitle": "Vertical Cinema",
+      "category": "portraits",
+      "image": "images/Cleaner_standing_in_bank_lobby_2K_20261025213634.jpg",
+      "thumb": "images/thumbs/Cleaner_standing_in_bank_lobby_2K_20261025213634.webp",
+      "aspect": "9:16",
+      "description": "Sole guardian of the institution after hours."
+    },
+    {
+      "id": "elevator-descent",
+      "type": "single",
+      "title": "Between Floors",
+      "subtitle": "Vertical Cinema",
+      "category": "portraits",
+      "image": "images/Man_standing_in_elevator_2K_20261025214917.jpg",
+      "thumb": "images/thumbs/Man_standing_in_elevator_2K_20261025214917.webp",
+      "aspect": "9:16",
+      "description": "A claustrophobic transit in green tint."
+    },
+    {
+      "id": "restaurant-hallway",
+      "type": "single",
+      "title": "The Red Corridor",
+      "subtitle": "Vertical Cinema",
+      "category": "portraits",
+      "image": "images/Man_standing_in_restaurant_hallway_2K_20261025212734.jpg",
+      "thumb": "images/thumbs/Man_standing_in_restaurant_hallway_2K_20261025212734.webp",
+      "aspect": "9:16",
+      "description": "Lingering at the threshold of the banquet hall."
+    },
+    {
+      "id": "bubblegum-noir",
+      "type": "single",
+      "title": "Bubblegum Noir",
+      "subtitle": "Character Stills",
+      "category": "surreal",
+      "image": "images/Woman_blowing_bubblegum_with_sho__323f6334_2K.jpg",
+      "thumb": "images/thumbs/Woman_blowing_bubblegum_with_sho__323f6334_2K.webp",
+      "aspect": "16:9",
+      "description": "Pop-art playfulness colliding with shadows."
+    },
+    {
+      "id": "velvet-shoes",
+      "type": "single",
+      "title": "Preparation in Velvet",
+      "subtitle": "Character Stills",
+      "category": "surreal",
+      "image": "images/Woman_fastening_shoe_on_girl_2K_20261026154816.jpg",
+      "thumb": "images/thumbs/Woman_fastening_shoe_on_girl_2K_20261026154816.webp",
+      "aspect": "16:9",
+      "description": "A quiet maternal ritual before the curtain rises."
+    },
+    {
+      "id": "bridge-smoke",
+      "type": "single",
+      "title": "Vapor on the Bridge",
+      "subtitle": "Character Stills",
+      "category": "atmosphere",
+      "image": "images/Woman_smoking_on_bridge_2K_20261027211349.jpg",
+      "thumb": "images/thumbs/Woman_smoking_on_bridge_2K_20261027211349.webp",
+      "aspect": "16:9",
+      "description": "Smoke mingling with river mist."
+    },
+    {
+      "id": "cloth-repair",
+      "type": "single",
+      "title": "The Seamstress",
+      "subtitle": "Character Stills",
+      "category": "surreal",
+      "image": "images/Mara_examining_repaired_cloth_ra__2K_20261026154918.jpg",
+      "thumb": "images/thumbs/Mara_examining_repaired_cloth_ra__2K_20261026154918.webp",
+      "aspect": "16:9",
+      "description": "Examining the golden stitch."
+    }
+  ]
+}

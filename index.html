@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinematic Stills & Visual Stories</title>
+  <meta name="description" content="Cinematic stills, narrative trilogies, and visual storytelling portfolio.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-title">
+          <span class="brand-dot"></span>
+          <span id="brandTitle">Cinematic Stills</span>
+        </div>
+        <span class="brand-subtitle">Visual Fiction & Direction</span>
+      </div>
+      <div class="header-actions">
+        <a href="#gallery" class="btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          Gallery
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-pill">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      Selected Works & Narratives
+    </div>
+    <h1 class="hero-title" id="heroTitle">Cinematic Stills & Visual Stories</h1>
+    <p class="hero-description" id="heroDesc">A curated archive of atmospheric environments, 3-act narrative series, and cinematic keyframes.</p>
+  </section>
+
+  <!-- FILTER TABS -->
+  <nav class="filter-nav" id="filterNav" aria-label="Gallery filters">
+    <!-- Rendered dynamically by app.js -->
+  </nav>
+
+  <!-- GALLERY SECTION -->
+  <main class="gallery-container" id="gallery">
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- Cards rendered dynamically by app.js -->
+    </div>
+  </main>
+
+  <!-- LIGHTBOX / STORY MODAL -->
+  <div class="lightbox-modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close modal">&times;</button>
+    <button class="lightbox-nav-btn lightbox-prev" id="lightboxPrev" aria-label="Previous image">&#10094;</button>
+    <button class="lightbox-nav-btn lightbox-next" id="lightboxNext" aria-label="Next image">&#10095;</button>
+
+    <div class="lightbox-content">
+      <div class="lightbox-img-wrapper">
+        <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded cinematic view">
+      </div>
+      <div class="lightbox-meta">
+        <h2 class="lightbox-title" id="lightboxTitle"></h2>
+        <p class="lightbox-caption" id="lightboxCaption"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-text">
+        &copy; 2026 Cinematic Portfolio. Built for high-res visual storytelling.
+      </div>
+      <div class="footer-links">
+        <a href="#gallery" class="footer-link">Back to Top &uarr;</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
