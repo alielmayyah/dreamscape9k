@@ -1,68 +1,155 @@
-# Cinematic Stills & Visual Stories Portfolio
+# ARCHIVE // 2.39:1 — Cinematic AI Artwork Archive
 
-A sleek, dark-mode, responsive portfolio website with interactive narrative trilogies and automated CI/CD deployment to **GitHub Pages**.
+An anonymous, immersive digital art exhibition engineered for showcasing cinematic AI-generated frames, 3-act narrative series, and editorial photography.
+
+Built with **React**, **TypeScript**, **Vite**, **Tailwind CSS**, **GSAP**, and **Lucide Icons**, configured for automated static deployment via **GitHub Actions** to **GitHub Pages**.
 
 ---
 
-## 🚀 Quick Setup & GitHub Deployment
+## 🏛️ Creative Vision & Principles
 
-### Step 1: Initialize Git & Connect your GitHub Repo
+* **Artwork Dominance**: The interface is minimal, dark, and unobtrusive. The artwork, composition, and negative space dictate the visual hierarchy.
+* **Strict Anonymity**: Completely impersonal. No author name, avatar, bio, or fake studio identity. The exhibition speaks for itself.
+* **Landscape-First Editorial Layout**: Alternating asymmetrical rhythms, 12-column responsive layout, 4K panoramic features, and intentional negative space.
+* **Three-Act Narrative Trilogies**: Dedicated multi-act series viewers with sequential timecodes and frame scrubbers (*The Hotel*, *The Taxi*).
+* **Cinematic Lightbox**: Full-screen viewer supporting keyboard navigation (`←`, `→`, `Esc`), mobile swipe gestures, body scroll locking, and losslessly rendered 2K/4K masters.
+* **Motion & Accessibility**: GSAP entrance timelines and ScrollTrigger reveals with automatic `prefers-reduced-motion` compliance.
 
-1. Create a new repository on [GitHub](https://github.com/new) (e.g. `cinematic-portfolio` or `<your-username>.github.io`).
-2. Run the following commands in this directory:
+---
 
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | React 19 (Component Architecture) |
+| **Language** | TypeScript (Strict Typing) |
+| **Build Tool** | Vite 8 + `@tailwindcss/vite` |
+| **Styling** | Tailwind CSS v4 + Editorial Typography (Cormorant Garamond, Inter, Space Mono) |
+| **Motion** | GSAP 3.15 + GSAP ScrollTrigger |
+| **Icons** | Lucide React |
+| **Hosting** | GitHub Pages (Static build via GitHub Actions) |
+
+---
+
+## 🚀 Getting Started
+
+### Local Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:5173` in your browser.
+
+3. Typecheck & Build:
+   ```bash
+   npm run typecheck
+   npm run build
+   ```
+
+---
+
+## 🌐 GitHub Pages Deployment
+
+The repository includes an automated CI/CD workflow at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+### 1. Push to GitHub
 ```bash
-git init
 git add .
-git commit -m "Initial portfolio commit"
-git branch -M main
+git commit -m "Deploy cinematic archive"
 git remote add origin https://github.com/<your-username>/<your-repo-name>.git
 git push -u origin main
 ```
 
-### Step 2: Enable GitHub Pages CI/CD
+### 2. Enable GitHub Pages in Repository Settings
+1. Go to your repository on GitHub.
+2. Navigate to **Settings** &rarr; **Pages**.
+3. Under **Build and deployment** &rarr; **Source**, select **GitHub Actions**.
+4. The workflow will automatically run, build, and publish your site at:
+   `https://<your-username>.github.io/<your-repo-name>/`
 
-1. Go to your repo on GitHub: **Settings** &rarr; **Pages**.
-2. Under **Build and deployment** &rarr; **Source**, select:
-   * **GitHub Actions**
-3. That's it! The included `.github/workflows/deploy.yml` will automatically build and publish your site at:
-   `https://<your-username>.github.io/<your-repo-name>/` (or `https://<your-username>.github.io` if named after your username).
-
----
-
-## 📸 Posting New Pictures & Stories via Script
-
-You can post new images programmatically via the included `publish.py` script. The script automatically:
-* Copies the image to `images/`
-* Generates WebP thumbnails in `images/thumbs/`
-* Detects aspect ratios (16:9, 9:16, 4:5, etc.)
-* Updates `data/gallery.json`
-* Commits and pushes to GitHub to trigger your live site update (with `--push`)
-
-### 1. Post a Single Still
-```bash
-python publish.py --image "my_still.jpg" --title "Midnight Rain" --category "atmosphere" --desc "Rain reflecting streetlights" --push
-```
-
-### 2. Post a Multi-Act Story Series (Trilogy)
-```bash
-python publish.py --series --title "The Heist" --images "scene1.jpg" "scene2.jpg" "scene3.jpg" --acts "The Plan" "The Breach" "The Escape" --desc "A three-part narrative" --push
-```
-
-### 3. Interactive Terminal Wizard
-Simply run:
-```bash
-python publish.py
-```
-and follow the on-screen prompts!
+*The Vite base path is set to `./` so all assets and images resolve cleanly regardless of your repository name.*
 
 ---
 
-## 💻 Local Preview
+## 📸 Managing & Adding Artwork
 
-To preview the website locally on your computer:
+### Method A: Automated CLI Script (Recommended)
+Run the included `publish.py` helper to automatically copy the artwork to `public/images/artwork/`, generate optimized WebP thumbnails in `public/images/thumbs/`, calculate aspect ratio, and append the typed definition to `src/data/artworks.ts`:
 
 ```bash
-python -m http.server 8000
+python publish.py --image "my_frame.jpg" --title "Midnight Crossing" --category "nocturne" --desc "A cold fog over the harbor" --build
 ```
-Then open `http://localhost:8000` in your web browser.
+
+### Method B: Manual Addition
+1. Place your full-resolution image in `public/images/artwork/`.
+2. (Optional) Place a WebP thumbnail in `public/images/thumbs/`.
+3. Add a typed entry in [`src/data/artworks.ts`](src/data/artworks.ts):
+
+```typescript
+{
+  id: 'frame-026',
+  sequenceNumber: '026',
+  title: 'Midnight Crossing',
+  src: 'images/artwork/my_frame.jpg',
+  thumb: 'images/thumbs/my_frame.webp',
+  alt: 'A cold fog over the harbor',
+  aspectRatio: '16:9',
+  category: 'nocturne',
+  description: 'A cold fog over the harbor',
+  collection: 'Nocturne Studies',
+  year: 2026,
+  layout: 'standard', // 'panoramic' | 'wide' | 'standard' | 'tall'
+  width: 2752,
+  height: 1536,
+  resolutionLabel: '2K Cinema'
+}
+```
+
+---
+
+## 📁 Repository Structure
+
+```
+best/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml            # Automated GitHub Actions deployment
+├── public/
+│   └── images/
+│       ├── artwork/              # Full-resolution master files (2K & 4K)
+│       └── thumbs/               # Lightweight WebP thumbnails
+├── src/
+│   ├── components/
+│   │   ├── SiteHeader.tsx        # Compact header with view toggle & frame count
+│   │   ├── HeroSection.tsx       # Film-style opening frame with GSAP reveal
+│   │   ├── CollectionFilters.tsx # Category navigation pills with frame counts
+│   │   ├── ArtworkGallery.tsx    # Asymmetric, landscape-first editorial gallery
+│   │   ├── ArtworkItem.tsx        # Individual frame card with hover zoom & metadata
+│   │   ├── CinematicSequence.tsx # Horizontal film strip for multi-act narratives
+│   │   ├── ArtworkLightbox.tsx   # Accessible full-screen viewer with touch & keyboard controls
+│   │   └── SiteFooter.tsx        # Minimal colophon & technical specifications
+│   ├── config/
+│   │   └── archive.config.ts     # Central configuration for archive title & categories
+│   ├── data/
+│   │   └── artworks.ts           # Strongly typed artwork dataset (25+ frames)
+│   ├── hooks/
+│   │   ├── usePrefersReducedMotion.ts
+│   │   └── useScrollLock.ts
+│   ├── styles/
+│   │   └── index.css             # Tailwind v4 styles, film grain, & typography
+│   ├── types/
+│   │   └── artwork.ts            # TypeScript definitions for artworks & episodes
+│   ├── App.tsx                   # Main root application orchestrator
+│   └── main.tsx                  # React entry point
+├── index.html                    # HTML shell with Google Fonts
+├── package.json                  # Dependencies & scripts
+├── publish.py                    # Python helper CLI for publishing new stills
+├── tsconfig.json                 # TypeScript strict compiler options
+└── vite.config.ts                # Vite configuration with Tailwind & base path
+```
