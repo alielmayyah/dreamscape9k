@@ -10,4 +10,3 @@ export interface Artwork {
 }
 
 export type GridCols = 1 | 2 | 3 | 4;
-export type ThemeMode = 'dark' | 'light';

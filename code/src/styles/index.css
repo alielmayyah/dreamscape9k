@@ -7,12 +7,6 @@
     --border-color: #1a1a1a;
   }
 
-  :root.light, [data-theme="light"] {
-    --bg-main: #ffffff;
-    --text-primary: #111111;
-    --border-color: #e5e5e5;
-  }
-
   body {
     background-color: var(--bg-main);
     color: var(--text-primary);
@@ -62,10 +56,6 @@
 ::-webkit-scrollbar-thumb {
   background: #252525;
   border-radius: 2px;
-}
-
-.light ::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
 }
 
 /* Reduced motion preference */
