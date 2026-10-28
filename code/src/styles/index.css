@@ -24,6 +24,31 @@
   }
 }
 
+/* Fluid responsive gallery container - scales up on bigger screens */
+.gallery-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .gallery-container {
+    width: 94%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .gallery-container {
+    width: 93%;
+  }
+}
+
+@media (min-width: 2000px) {
+  .gallery-container {
+    width: 92%;
+  }
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
