@@ -35,9 +35,9 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
         <div className="absolute inset-0 bg-[#080808] animate-pulse" />
       )}
 
-      {/* Image */}
+      {/* Image - renders full-resolution artwork directly */}
       <img
-        src={artwork.thumb || artwork.src}
+        src={artwork.src}
         alt={artwork.alt || `Frame ${index + 1}`}
         onLoad={() => setLoaded(true)}
         loading={priority ? 'eager' : 'lazy'}
