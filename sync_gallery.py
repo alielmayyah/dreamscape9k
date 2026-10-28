@@ -21,47 +21,61 @@ DATA_FILE = os.path.join(CODE_DIR, "src", "data", "artworks.ts")
 os.makedirs(PUBLIC_ART, exist_ok=True)
 os.makedirs(PUBLIC_THUMB, exist_ok=True)
 
-# Canonical ordering grouping related series together
 SERIES_ORDER = [
+    # 1. THE HOTEL (TRILOGY) - 3 items
     '01_Hotel_Owner',
     '02_The_Guest',
     '03_The_Keyhole',
+
+    # 2. THE TAXI (TRILOGY) - 3 items
     '01_The_Taxi',
     '02_The_Preparation',
     '03_The_Burial',
+
+    # 3. 4K WIDESCREEN AMERICANA 1 - 3 items
     'diner_wide',
     'gas_station',
     'laundromat',
+
+    # 4. 4K WIDESCREEN AMERICANA 2 - 3 items
     'motel',
     'pier',
     'Empty_motel_room_at_dawn',
+
+    # 5. NIGHT CUSTODIANS - 3 items
     'Cleaner_watches_manta_ray',
     'Cleaner_standing_before_red_screen',
     'Cleaner_standing_in_bank_lobby',
+
+    # 6. PHONE BOOTHS & HIGHWAY - 3 items
     'Giant_man_using_phone_booth',
     'Large_man_using_phone_booth',
     'Vintage_sports_car_on_road',
+
+    # 7. SAXOPHONE ACOUSTICS - 3 items
     'Blind_man_playing_saxophone',
     'Saxophonist_playing_in_flooded_b',
-    'Saxophonist_playing_in_empty_the',
+    'Saxophonist_playing_in_empty_the__9a',
+
+    # 8. THEATRE & SURREAL STUDIES - 3 items
+    'Saxophonist_playing_in_empty_the__f2',
     'Dentist_examines_crocodile_teeth',
     'Girl_issuing_royal_command',
+
+    # 9. COASTAL & WATERWAYS - 3 items
     'Motorcyclist_standing_on_ferry_deck',
     'Woman_sitting_on_diving_platform',
     'Woman_smoking_on_bridge',
+
+    # 10. VELVET & CRIMSON RITUALS - 3 items
     'Woman_fastening_shoe_on_girl',
     'Woman_blowing_bubblegum_with_sho',
     'Mara_examining_repaired_cloth_ra',
-    'Man_standing_in_elevator',
-    'Man_standing_in_restaurant_hallway',
-    'TAXI_Instagram_Story',
-    'Couple_fueling_car_at_station',
-    'TAXI_Instagram_Grid',
 ]
 
 all_photos = [f for f in os.listdir(GALLERY_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
 # Filter duplicates
-all_photos = [f for f in all_photos if '9f5c6de1_2K_1_' not in f]
+all_photos = [f for f in all_photos if '9f5c6de1_2K_1_' not in f and '(1)' not in f]
 
 def get_order_key(filename):
     clean = re.sub(r'[^\w\.-]', '_', filename)
@@ -113,4 +127,4 @@ export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
 with open(DATA_FILE, "w", encoding="utf-8") as f:
     f.write(ts_content)
 
-print(f"✓ Synchronized {len(items)} frames into {DATA_FILE}")
+print(f"[OK] Synchronized {len(items)} frames into {DATA_FILE}")

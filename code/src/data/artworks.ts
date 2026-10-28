@@ -300,55 +300,5 @@ export const ARTWORKS_DATA: Artwork[] = [
     "aspectRatio": "16:9",
     "width": 2752,
     "height": 1536
-  },
-  {
-    "id": "frame-031",
-    "title": "Frame 031",
-    "src": "images/artwork/Man_standing_in_elevator_2K_20261025214917.jpg",
-    "thumb": "images/thumbs/Man_standing_in_elevator_2K_20261025214917.webp",
-    "alt": "Cinematic frame 031",
-    "aspectRatio": "9:16",
-    "width": 1536,
-    "height": 2752
-  },
-  {
-    "id": "frame-032",
-    "title": "Frame 032",
-    "src": "images/artwork/Man_standing_in_restaurant_hallway_2K_20261025212734.jpg",
-    "thumb": "images/thumbs/Man_standing_in_restaurant_hallway_2K_20261025212734.webp",
-    "alt": "Cinematic frame 032",
-    "aspectRatio": "9:16",
-    "width": 1536,
-    "height": 2752
-  },
-  {
-    "id": "frame-033",
-    "title": "Frame 033",
-    "src": "images/artwork/TAXI_Instagram_Story_1080x1920.jpg",
-    "thumb": "images/thumbs/TAXI_Instagram_Story_1080x1920.webp",
-    "alt": "Cinematic frame 033",
-    "aspectRatio": "9:16",
-    "width": 1080,
-    "height": 1920
-  },
-  {
-    "id": "frame-034",
-    "title": "Frame 034",
-    "src": "images/artwork/Couple_fueling_car_at_station_2K_20261026201551.jpg",
-    "thumb": "images/thumbs/Couple_fueling_car_at_station_2K_20261026201551.webp",
-    "alt": "Cinematic frame 034",
-    "aspectRatio": "16:9",
-    "width": 2752,
-    "height": 1536
-  },
-  {
-    "id": "frame-035",
-    "title": "Frame 035",
-    "src": "images/artwork/TAXI_Instagram_Grid_1080x1350.jpg",
-    "thumb": "images/thumbs/TAXI_Instagram_Grid_1080x1350.webp",
-    "alt": "Cinematic frame 035",
-    "aspectRatio": "0.8:1",
-    "width": 1080,
-    "height": 1350
   }
 ];
