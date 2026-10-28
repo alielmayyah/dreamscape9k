@@ -71,32 +71,28 @@ export const ArtworkGrid: React.FC<ArtworkGridProps> = ({
     switch (gridCols) {
       case 1:
         return {
-          containerClass: 'max-w-[1240px]',
           gridClass: 'grid-cols-1 gap-6 sm:gap-8 md:gap-10',
         };
       case 2:
         return {
-          containerClass: 'max-w-[1800px]',
           gridClass: 'grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-5',
         };
       case 4:
         return {
-          containerClass: 'max-w-[1800px]',
           gridClass: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-3.5',
         };
       case 3:
       default:
         return {
-          containerClass: 'max-w-[1800px]',
           gridClass: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4',
         };
     }
   };
 
-  const { containerClass, gridClass } = getGridConfig();
+  const { gridClass } = getGridConfig();
 
   return (
-    <main className={`${containerClass} mx-auto px-3 sm:px-5 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-20`}>
+    <main className="w-[90%] mx-auto pt-4 sm:pt-6 md:pt-8 pb-20">
       <div
         ref={containerRef}
         className={`grid ${gridClass}`}
