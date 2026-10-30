@@ -2,7 +2,7 @@
 """
 Sync Gallery Script
 Synchronizes all photos from 'gallery/' into responsive WebP sizes in
-'code/public/images/frames/' (plus tiny blur placeholders), orders frames newest to oldest,
+'code/public/images/{small,grid,large,full}/' (plus tiny blur placeholders), orders frames newest to oldest,
 then commits and pushes to main so GitHub Actions redeploys the site.
 """
 
@@ -11,20 +11,27 @@ import re
 import json
 import io
 import base64
+import shutil
 import subprocess
 from PIL import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 GALLERY_DIR = os.path.join(BASE_DIR, "gallery")
 CODE_DIR = os.path.join(BASE_DIR, "code")
-FRAMES_DIR = os.path.join(CODE_DIR, "public", "images", "frames")
+IMAGES_DIR = os.path.join(CODE_DIR, "public", "images")
 DATA_FILE = os.path.join(CODE_DIR, "src", "data", "artworks.ts")
 
-# Responsive widths; the original width is always added as the largest size
-WIDTHS = [480, 960, 1600]
+# One folder per size; None = original width. Sizes wider than the original are skipped.
+SIZES = [
+    ("small", 480),    # phones / small grid tiles
+    ("grid", 960),     # grid tiles on large or high-DPI screens
+    ("large", 1600),   # fullscreen on normal screens
+    ("full", None),    # fullscreen on large / retina screens
+]
 PLACEHOLDER_WIDTH = 24
 
-os.makedirs(FRAMES_DIR, exist_ok=True)
+for folder, _ in SIZES:
+    os.makedirs(os.path.join(IMAGES_DIR, folder), exist_ok=True)
 
 all_photos = [f for f in os.listdir(GALLERY_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
 # Filter duplicates
@@ -50,14 +57,17 @@ for i, f in enumerate(all_photos):
         aspect = "16:9" if 1.7 <= ratio <= 1.85 else ("9:16" if 0.5 <= ratio <= 0.6 else f"{ratio}:1")
 
         srcset = []
-        for width in sorted({x for x in WIDTHS if x < w} | {w}):
-            name = f"{stem}-{width}.webp"
-            dst = os.path.join(FRAMES_DIR, name)
-            written.add(name)
+        for folder, width in SIZES:
+            if width is not None and width >= w:
+                continue
+            width = width or w
+            rel = f"{folder}/{stem}.webp"
+            dst = os.path.join(IMAGES_DIR, folder, f"{stem}.webp")
+            written.add(rel)
             if not is_fresh(dst, src_path):
                 resized = img if width == w else img.resize((width, round(h * width / w)), Image.Resampling.LANCZOS)
                 resized.save(dst, "WEBP", quality=85 if width == w else 80, method=6)
-            srcset.append((width, f"images/frames/{name}"))
+            srcset.append((width, f"images/{rel}"))
 
         # Tiny inline preview shown (blurred) while the real image loads
         tiny = img.resize((PLACEHOLDER_WIDTH, max(1, round(h * PLACEHOLDER_WIDTH / w))), Image.Resampling.LANCZOS)
@@ -77,10 +87,14 @@ for i, f in enumerate(all_photos):
         "height": h
     })
 
-# Remove frames whose source photo is gone
-for name in os.listdir(FRAMES_DIR):
-    if name not in written:
-        os.remove(os.path.join(FRAMES_DIR, name))
+# Remove images whose source photo is gone
+for folder, _ in SIZES:
+    for name in os.listdir(os.path.join(IMAGES_DIR, folder)):
+        if f"{folder}/{name}" not in written:
+            os.remove(os.path.join(IMAGES_DIR, folder, name))
+
+# Old flat layout from before the per-size folders
+shutil.rmtree(os.path.join(IMAGES_DIR, "frames"), ignore_errors=True)
 
 ts_content = f"""import {{ Artwork }} from '../types/artwork';
 
