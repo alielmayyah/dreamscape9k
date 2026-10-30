@@ -314,8 +314,8 @@ export const ARTWORKS_DATA: Artwork[] = [
   {
     "id": "frame-032",
     "title": "Frame 032",
-    "src": "images/artwork/Boy_spinning_carnival_prize_wheel_a67a8302_2K.jpg",
-    "thumb": "images/thumbs/Boy_spinning_carnival_prize_wheel_a67a8302_2K.webp",
+    "src": "images/artwork/Blind_pianist_playing_empty_theater_2e6806da_2K.jpg",
+    "thumb": "images/thumbs/Blind_pianist_playing_empty_theater_2e6806da_2K.webp",
     "alt": "Cinematic frame 032",
     "aspectRatio": "16:9",
     "width": 2752,
@@ -324,8 +324,8 @@ export const ARTWORKS_DATA: Artwork[] = [
   {
     "id": "frame-033",
     "title": "Frame 033",
-    "src": "images/artwork/Woman_merging_into_painted_mural_eed3e4f7_2K.jpg",
-    "thumb": "images/thumbs/Woman_merging_into_painted_mural_eed3e4f7_2K.webp",
+    "src": "images/artwork/Boy_spinning_carnival_prize_wheel_a67a8302_2K.jpg",
+    "thumb": "images/thumbs/Boy_spinning_carnival_prize_wheel_a67a8302_2K.webp",
     "alt": "Cinematic frame 033",
     "aspectRatio": "16:9",
     "width": 2752,
@@ -334,9 +334,29 @@ export const ARTWORKS_DATA: Artwork[] = [
   {
     "id": "frame-034",
     "title": "Frame 034",
+    "src": "images/artwork/Man_sitting_in_car_preparing_3f4be20c_2K.jpg",
+    "thumb": "images/thumbs/Man_sitting_in_car_preparing_3f4be20c_2K.webp",
+    "alt": "Cinematic frame 034",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
+  },
+  {
+    "id": "frame-035",
+    "title": "Frame 035",
+    "src": "images/artwork/Woman_merging_into_painted_mural_eed3e4f7_2K.jpg",
+    "thumb": "images/thumbs/Woman_merging_into_painted_mural_eed3e4f7_2K.webp",
+    "alt": "Cinematic frame 035",
+    "aspectRatio": "16:9",
+    "width": 2752,
+    "height": 1536
+  },
+  {
+    "id": "frame-036",
+    "title": "Frame 036",
     "src": "images/artwork/Woman_with_prosthetics_sitting_down_2e56452e_2K.jpg",
     "thumb": "images/thumbs/Woman_with_prosthetics_sitting_down_2e56452e_2K.webp",
-    "alt": "Cinematic frame 034",
+    "alt": "Cinematic frame 036",
     "aspectRatio": "16:9",
     "width": 2752,
     "height": 1536
