@@ -1,0 +1,25 @@
+{
+  "panels": [
+    {
+      "path": "../../gallery/HOTEL/originals/01_Hotel_Owner.jpg",
+      "formats": {
+        "post": {"align": [0.5, 0.05]},
+        "story": {"align": [0.5, 0.12]}
+      }
+    },
+    {
+      "path": "../../gallery/HOTEL/originals/02_The_Guest.jpg",
+      "formats": {
+        "post": {"align": [0.5, 0.4]},
+        "story": {"align": [0.5, 0.5]}
+      }
+    },
+    {
+      "path": "../../gallery/HOTEL/originals/03_The_Keyhole.jpg",
+      "formats": {
+        "post": {"align": [0.5, 0.32]},
+        "story": {"align": [0.5, 0.5]}
+      }
+    }
+  ]
+}
