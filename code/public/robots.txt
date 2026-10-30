@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alielmayyah.github.io/dreamscape9k/sitemap.xml

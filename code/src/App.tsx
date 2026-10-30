@@ -6,7 +6,7 @@ import { ArtworkLightbox } from './components/ArtworkLightbox';
 import { FloatingControls } from './components/FloatingControls';
 
 export const App: React.FC = () => {
-  const [gridCols, setGridCols] = useState<GridCols>(3);
+  const [gridCols, setGridCols] = useState<GridCols>(4);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   // Ensure dark mode is permanently set on document
