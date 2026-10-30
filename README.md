@@ -42,7 +42,7 @@ Open **`http://localhost:5173`** in your browser.
    ```bash
    python sync_gallery.py
    ```
-   *(Automatically generates thumbnails and updates the gallery dataset!)*
+   *(Generates thumbnails, updates the gallery dataset, then commits and pushes to `main` to redeploy the live site.)*
 
 ---
 

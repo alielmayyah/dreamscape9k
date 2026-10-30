@@ -2,13 +2,15 @@
 """
 Sync Gallery Script
 Synchronizes all photos from 'gallery/' to 'code/public/images/artwork/',
-generates WebP thumbnails, and ensures series are placed together sequentially.
+generates WebP thumbnails, orders frames newest to oldest,
+then commits and pushes to main so GitHub Actions redeploys the site.
 """
 
 import os
 import re
 import json
 import shutil
+import subprocess
 from PIL import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,70 +23,12 @@ DATA_FILE = os.path.join(CODE_DIR, "src", "data", "artworks.ts")
 os.makedirs(PUBLIC_ART, exist_ok=True)
 os.makedirs(PUBLIC_THUMB, exist_ok=True)
 
-SERIES_ORDER = [
-    # 1. THE HOTEL (TRILOGY) - 3 items
-    '01_Hotel_Owner',
-    '02_The_Guest',
-    '03_The_Keyhole',
-
-    # 2. THE TAXI (TRILOGY) - 3 items
-    '01_The_Taxi',
-    '02_The_Preparation',
-    '03_The_Burial',
-
-    # 3. 4K WIDESCREEN AMERICANA 1 - 3 items
-    'diner_wide',
-    'gas_station',
-    'laundromat',
-
-    # 4. 4K WIDESCREEN AMERICANA 2 - 3 items
-    'motel',
-    'pier',
-    'Empty_motel_room_at_dawn',
-
-    # 5. NIGHT CUSTODIANS - 3 items
-    'Cleaner_watches_manta_ray',
-    'Cleaner_standing_before_red_screen',
-    'Cleaner_standing_in_bank_lobby',
-
-    # 6. PHONE BOOTHS & HIGHWAY - 3 items
-    'Giant_man_using_phone_booth',
-    'Large_man_using_phone_booth',
-    'Vintage_sports_car_on_road',
-
-    # 7. SAXOPHONE ACOUSTICS - 3 items
-    'Blind_man_playing_saxophone',
-    'Saxophonist_playing_in_flooded_b',
-    'Saxophonist_playing_in_empty_the__9a',
-
-    # 8. THEATRE & SURREAL STUDIES - 3 items
-    'Saxophonist_playing_in_empty_the__f2',
-    'Dentist_examines_crocodile_teeth',
-    'Girl_issuing_royal_command',
-
-    # 9. COASTAL & WATERWAYS - 3 items
-    'Motorcyclist_standing_on_ferry_deck',
-    'Woman_sitting_on_diving_platform',
-    'Woman_smoking_on_bridge',
-
-    # 10. VELVET & CRIMSON RITUALS - 3 items
-    'Woman_fastening_shoe_on_girl',
-    'Woman_blowing_bubblegum_with_sho',
-    'Mara_examining_repaired_cloth_ra',
-]
-
 all_photos = [f for f in os.listdir(GALLERY_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
 # Filter duplicates
 all_photos = [f for f in all_photos if '9f5c6de1_2K_1_' not in f and '(1)' not in f]
 
-def get_order_key(filename):
-    clean = re.sub(r'[^\w\.-]', '_', filename)
-    for idx, prefix in enumerate(SERIES_ORDER):
-        if clean.startswith(prefix):
-            return (0, idx, filename)
-    return (1, 0, filename)
-
-all_photos.sort(key=get_order_key)
+# Newest first, by file modified time
+all_photos.sort(key=lambda f: os.path.getmtime(os.path.join(GALLERY_DIR, f)), reverse=True)
 print(f"Syncing {len(all_photos)} photos from gallery/ into code...")
 
 items = []
@@ -128,3 +72,18 @@ with open(DATA_FILE, "w", encoding="utf-8") as f:
     f.write(ts_content)
 
 print(f"[OK] Synchronized {len(items)} frames into {DATA_FILE}")
+
+def deploy():
+    def git(*cmd):
+        return subprocess.run(["git", *cmd], cwd=BASE_DIR, check=True)
+
+    git("add", "gallery", os.path.join("code", "public", "images"), os.path.join("code", "src", "data", "artworks.ts"))
+    # Nothing staged -> nothing to deploy
+    if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=BASE_DIR).returncode == 0:
+        print("[OK] No gallery changes to deploy.")
+        return
+    git("commit", "-m", f"feat: sync gallery ({len(items)} frames)")
+    git("push", "origin", "main")
+    print("[OK] Pushed to main. GitHub Actions will redeploy the site.")
+
+deploy()
