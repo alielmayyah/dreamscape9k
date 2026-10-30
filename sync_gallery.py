@@ -23,12 +23,14 @@ DATA_FILE = os.path.join(CODE_DIR, "src", "data", "artworks.ts")
 
 # One folder per size; None = original width. Sizes wider than the original are skipped.
 SIZES = [
-    ("small", 480),    # phones / small grid tiles
-    ("grid", 960),     # grid tiles on large or high-DPI screens
-    ("large", 1600),   # fullscreen on normal screens
+    ("small", 640),    # phones / small grid tiles
+    ("grid", 1280),    # grid tiles on large or high-DPI screens
+    ("large", 1920),   # fullscreen on normal screens
     ("full", None),    # fullscreen on large / retina screens
 ]
 PLACEHOLDER_WIDTH = 24
+# Quality 92 keeps fine detail and shadow gradients; 80 visibly smeared them
+WEBP_QUALITY = 92
 
 for folder, _ in SIZES:
     os.makedirs(os.path.join(IMAGES_DIR, folder), exist_ok=True)
@@ -66,7 +68,7 @@ for i, f in enumerate(all_photos):
             written.add(rel)
             if not is_fresh(dst, src_path):
                 resized = img if width == w else img.resize((width, round(h * width / w)), Image.Resampling.LANCZOS)
-                resized.save(dst, "WEBP", quality=85 if width == w else 80, method=6)
+                resized.save(dst, "WEBP", quality=WEBP_QUALITY, method=6)
             srcset.append((width, f"images/{rel}"))
 
         # Tiny inline preview shown (blurred) while the real image loads

@@ -43,7 +43,7 @@ export const ArtworkItem: React.FC<ArtworkItemProps> = ({
       )}
 
       {/* Parallax inner container - enables silky scroll drift without edge bleeding */}
-      <div className="artwork-parallax absolute -inset-y-[7%] inset-x-0 w-full h-[114%] will-change-transform">
+      <div className="artwork-parallax absolute -inset-y-[7%] inset-x-0 w-full h-[114%]">
         <img
           src={artwork.src}
           srcSet={artwork.srcSet}
