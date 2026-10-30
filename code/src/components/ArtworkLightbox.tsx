@@ -11,6 +11,7 @@ interface ArtworkLightboxProps {
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
+  neighbours: { prev: Artwork | null; next: Artwork | null };
 }
 
 export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
@@ -21,12 +22,25 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
   onClose,
   onNext,
   onPrev,
+  neighbours,
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
   useScrollLock(isOpen);
+
+  // Warm the cache for neighbours so next/prev feels instant
+  useEffect(() => {
+    if (!isOpen) return;
+    [neighbours.prev, neighbours.next].forEach((n) => {
+      if (!n) return;
+      const img = new Image();
+      img.sizes = '96vw';
+      img.srcset = n.srcSet;
+      img.src = n.src;
+    });
+  }, [isOpen, neighbours.prev, neighbours.next]);
 
   useEffect(() => {
     if (isOpen) {
@@ -130,8 +144,13 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
         <img
           key={artwork.src}
           src={artwork.src}
+          srcSet={artwork.srcSet}
+          sizes="96vw"
+          width={artwork.width}
+          height={artwork.height}
           alt={artwork.alt || `Frame ${currentIndex + 1}`}
-          className="max-w-[96vw] max-h-[90vh] object-contain pointer-events-auto rounded-[2px] transition-opacity duration-300"
+          style={{ backgroundImage: `url(${artwork.placeholder})`, backgroundSize: 'cover' }}
+          className="w-auto h-auto max-w-[96vw] max-h-[90vh] object-contain pointer-events-auto rounded-[2px] transition-opacity duration-300"
         />
 
         {/* Minimal Subtle Counter Only */}

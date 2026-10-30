@@ -1,27 +1,30 @@
 #!/usr/bin/env python3
 """
 Sync Gallery Script
-Synchronizes all photos from 'gallery/' to 'code/public/images/artwork/',
-generates WebP thumbnails, orders frames newest to oldest,
+Synchronizes all photos from 'gallery/' into responsive WebP sizes in
+'code/public/images/frames/' (plus tiny blur placeholders), orders frames newest to oldest,
 then commits and pushes to main so GitHub Actions redeploys the site.
 """
 
 import os
 import re
 import json
-import shutil
+import io
+import base64
 import subprocess
 from PIL import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 GALLERY_DIR = os.path.join(BASE_DIR, "gallery")
 CODE_DIR = os.path.join(BASE_DIR, "code")
-PUBLIC_ART = os.path.join(CODE_DIR, "public", "images", "artwork")
-PUBLIC_THUMB = os.path.join(CODE_DIR, "public", "images", "thumbs")
+FRAMES_DIR = os.path.join(CODE_DIR, "public", "images", "frames")
 DATA_FILE = os.path.join(CODE_DIR, "src", "data", "artworks.ts")
 
-os.makedirs(PUBLIC_ART, exist_ok=True)
-os.makedirs(PUBLIC_THUMB, exist_ok=True)
+# Responsive widths; the original width is always added as the largest size
+WIDTHS = [480, 960, 1600]
+PLACEHOLDER_WIDTH = 24
+
+os.makedirs(FRAMES_DIR, exist_ok=True)
 
 all_photos = [f for f in os.listdir(GALLERY_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
 # Filter duplicates
@@ -31,37 +34,53 @@ all_photos = [f for f in all_photos if '9f5c6de1_2K_1_' not in f and '(1)' not i
 all_photos.sort(key=lambda f: os.path.getmtime(os.path.join(GALLERY_DIR, f)), reverse=True)
 print(f"Syncing {len(all_photos)} photos from gallery/ into code...")
 
+def is_fresh(dst, src):
+    return os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src)
+
 items = []
+written = set()
 for i, f in enumerate(all_photos):
     src_path = os.path.join(GALLERY_DIR, f)
-    clean_name = re.sub(r'[^\w\.-]', '_', f)
-    dst_art = os.path.join(PUBLIC_ART, clean_name)
-    shutil.copy2(src_path, dst_art)
+    stem = re.sub(r'[^\w\.-]', '_', os.path.splitext(f)[0])
 
-    thumb_name = os.path.splitext(clean_name)[0] + ".webp"
-    dst_thumb = os.path.join(PUBLIC_THUMB, thumb_name)
-
-    with Image.open(dst_art) as img:
+    with Image.open(src_path) as img:
+        img = img.convert("RGB")
         w, h = img.size
         ratio = round(w / h, 2)
         aspect = "16:9" if 1.7 <= ratio <= 1.85 else ("9:16" if 0.5 <= ratio <= 0.6 else f"{ratio}:1")
 
-        if not os.path.exists(dst_thumb):
-            img_rgb = img.convert("RGB")
-            img_thumb = img_rgb.copy()
-            img_thumb.thumbnail((800, 800), Image.Resampling.LANCZOS)
-            img_thumb.save(dst_thumb, "WEBP", quality=82)
+        srcset = []
+        for width in sorted({x for x in WIDTHS if x < w} | {w}):
+            name = f"{stem}-{width}.webp"
+            dst = os.path.join(FRAMES_DIR, name)
+            written.add(name)
+            if not is_fresh(dst, src_path):
+                resized = img if width == w else img.resize((width, round(h * width / w)), Image.Resampling.LANCZOS)
+                resized.save(dst, "WEBP", quality=85 if width == w else 80, method=6)
+            srcset.append((width, f"images/frames/{name}"))
+
+        # Tiny inline preview shown (blurred) while the real image loads
+        tiny = img.resize((PLACEHOLDER_WIDTH, max(1, round(h * PLACEHOLDER_WIDTH / w))), Image.Resampling.LANCZOS)
+        buf = io.BytesIO()
+        tiny.save(buf, "WEBP", quality=40)
+        placeholder = "data:image/webp;base64," + base64.b64encode(buf.getvalue()).decode()
 
     items.append({
         "id": f"frame-{i+1:03d}",
         "title": f"Frame {i+1:03d}",
-        "src": f"images/artwork/{clean_name}",
-        "thumb": f"images/thumbs/{thumb_name}",
+        "src": srcset[-1][1],
+        "srcSet": ", ".join(f"{url} {width}w" for width, url in srcset),
+        "placeholder": placeholder,
         "alt": f"Cinematic frame {i+1:03d}",
         "aspectRatio": aspect,
         "width": w,
         "height": h
     })
+
+# Remove frames whose source photo is gone
+for name in os.listdir(FRAMES_DIR):
+    if name not in written:
+        os.remove(os.path.join(FRAMES_DIR, name))
 
 ts_content = f"""import {{ Artwork }} from '../types/artwork';
 

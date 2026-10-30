@@ -2,7 +2,8 @@ export interface Artwork {
   id: string;
   title: string;
   src: string;
-  thumb: string;
+  srcSet: string;
+  placeholder: string;
   alt: string;
   aspectRatio: string;
   width: number;

@@ -103,24 +103,28 @@ export const ArtworkGrid: React.FC<ArtworkGridProps> = ({
       case 1:
         return {
           gridClass: 'grid-cols-1 gap-4 sm:gap-6 md:gap-8',
+          sizes: '95vw',
         };
       case 2:
         return {
           gridClass: 'grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-3.5',
+          sizes: '(min-width: 640px) 48vw, 95vw',
         };
       case 4:
         return {
           gridClass: 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5 sm:gap-2 md:gap-2',
+          sizes: '(min-width: 1024px) 24vw, (min-width: 768px) 32vw, 48vw',
         };
       case 3:
       default:
         return {
           gridClass: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 md:gap-2.5',
+          sizes: '(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 95vw',
         };
     }
   };
 
-  const { gridClass } = getGridConfig();
+  const { gridClass, sizes } = getGridConfig();
 
   return (
     <main className="gallery-container pt-4 sm:pt-6 md:pt-8 pb-24">
@@ -133,7 +137,8 @@ export const ArtworkGrid: React.FC<ArtworkGridProps> = ({
             key={artwork.id}
             artwork={artwork}
             index={idx}
-            priority={idx < 6}
+            sizes={sizes}
+            priority={idx < 8}
             onSelect={onSelectArtwork}
           />
         ))}

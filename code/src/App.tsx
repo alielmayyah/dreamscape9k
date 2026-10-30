@@ -52,6 +52,10 @@ export const App: React.FC = () => {
         onClose={() => setSelectedIndex(null)}
         onNext={handleNext}
         onPrev={handlePrev}
+        neighbours={{
+          prev: selectedIndex !== null ? ARTWORKS_DATA[(selectedIndex - 1 + ARTWORKS_DATA.length) % ARTWORKS_DATA.length] : null,
+          next: selectedIndex !== null ? ARTWORKS_DATA[(selectedIndex + 1) % ARTWORKS_DATA.length] : null,
+        }}
       />
     </div>
   );
