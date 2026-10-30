@@ -1,6 +1,6 @@
 # HOTEL reference observations
 
-Inspected all five HOTEL JPEGs on 2026-10-28, including the original stills and both finished layouts. They now live in `gallery/HOTEL/originals` and `gallery/HOTEL/instagram`. These notes preserve what was observed; they are not a definition of every Soul Cinema image.
+Inspected all five HOTEL JPEGs on 2026-10-28, including the original stills and both finished layouts. The original stills now live in the flat `gallery/` folder; finished layouts go in `instagram/HOTEL/`. These notes preserve what was observed; they are not a definition of every Soul Cinema image.
 
 ## Images and sequence
 

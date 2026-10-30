@@ -1,11 +1,11 @@
 ---
-name: instagram-ready-skill
+name: instagram-ready
 description: "Prepare cinematic stills, contact sheets, and image grids for Instagram feed posts and Stories. Use for 'Instagram ready', 'adjust the grid', or post/Story resizing requests, especially layouts matching the HOTEL examples. Recompose panels while preserving their order, aspect ratios, subjects, and existing grade."
 ---
 
 # Instagram Ready
 
-Turn existing images into finished Instagram layouts. The reference treatment is the three-frame film strip in this project's `gallery/HOTEL` folder. Originals are in `originals/` and finished layouts in `instagram/`. Read [the HOTEL observations](references/hotel-reference.md) when matching that treatment; its palette and story are examples, not requirements for other projects.
+Turn existing images into finished Instagram layouts. The reference treatment is the HOTEL three-frame film strip (`gallery/01_Hotel_Owner.jpg`, `02_The_Guest.jpg`, `03_The_Keyhole.jpg`). Read [the HOTEL observations](references/hotel-reference.md) when matching that treatment; its palette and story are examples, not requirements for other projects.
 
 ## Choose and inspect the inputs
 
@@ -36,12 +36,12 @@ Rebuild each format from the original panels. The Story shows more vertical scen
 
 Use the bundled deterministic compositor for unchanged source images. It requires Python and Pillow (`python -m pip install Pillow` if unavailable). Paths in this skill are relative to this folder; source paths passed on the command line are relative to the shell's working directory.
 
-From the SOUL CINEMA project root, the HOTEL example is:
+From the repository root, the HOTEL example is:
 
 ```powershell
-python ".\instagram-ready-skill\scripts\instagram_ready.py" `
-  --manifest ".\instagram-ready-skill\references\hotel-panels.json" `
-  --name HOTEL --out-dir ".\gallery\HOTEL\instagram"
+python ".\.claude\skills\instagram-ready\scripts\instagram_ready.py" `
+  --manifest ".\.claude\skills\instagram-ready\references\hotel-panels.json" `
+  --name HOTEL --out-dir ".\instagram\HOTEL"
 ```
 
 The [HOTEL manifest](references/hotel-panels.json) reproduces the measured crop choices as well as the layout. For other images, replace `--manifest ...` with the source paths in order. The helper creates both sizes and a layout report. Choose one with `--formats post` or `--formats story`; retain full frames with `--fit contain`; request PNG with `--file-type png`. A panel's explicit manifest settings override the command-line default fit. Existing filenames get a shared `_v2`, `_v3`, etc. suffix. Originals are never overwritten. Default output is high-quality JPEG with an embedded sRGB profile and corrected EXIF orientation.
@@ -52,7 +52,7 @@ For panel extraction, individual crop alignments, or different behavior between 
 {
   "panels": [
     {
-      "path": "../originals/01_Hotel_Owner.jpg",
+      "path": "../../gallery/01_Hotel_Owner.jpg",
       "align": [0.5, 0.5],
       "formats": {"post": {"align": [0.5, 0.35]}, "story": {"fit": "contain"}}
     }
@@ -62,7 +62,7 @@ For panel extraction, individual crop alignments, or different behavior between 
 
 Manifest paths are relative to the manifest file, not this skill. `align` ranges from 0 to 1: 0 retains the left/top edge, 1 retains the right/bottom edge, and 0.5 centers the crop; it is not automatic face detection. An optional `box: [left, top, right, bottom]` extracts a panel in pixels after EXIF orientation; right/bottom are exclusive. To rebuild an existing grid, repeat its source path with one `box` per panel, in reading order. Use `--manifest path.json --out-dir output-folder --name PROJECT`. Set `--columns` only when the intended grid has multiple columns.
 
-Save deliverables in the user's requested folder, otherwise `gallery/<PROJECT>/instagram` under the current project. Store source images in `gallery/<PROJECT>/originals` and optional references in `gallery/<PROJECT>/references`. Keep layout manifests beside the exports; paths such as `../originals/01_Hotel_Owner.jpg` resolve from there. Return clickable links to the finished post and Story.
+Save deliverables in the user's requested folder, otherwise `instagram/<PROJECT>/` at the repository root. Source stills stay in the flat `gallery/` folder, which also feeds the website; never write exports into `gallery/`, or they would be published as frames. Keep layout manifests beside the exports; from `instagram/<PROJECT>/`, paths such as `../../gallery/01_Hotel_Owner.jpg` resolve to the originals. Return clickable links to the finished post and Story.
 
 ## Verify before delivery
 

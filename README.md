@@ -8,15 +8,21 @@ A minimal, dark, cinematic image gallery for showcasing AI-generated artworks.
 
 ```
 best/
-├── gallery/              # All original photos & artwork (drop new pictures here!)
-├── code/                 # Minimal React + Vite + Tailwind website codebase
+├── gallery/              # Original photos (drop new pictures here!)
+├── instagram/            # Instagram post/Story exports, one folder per project
+├── code/                 # React + Vite + Tailwind website
 │   ├── src/              # Components, styles, and gallery dataset
-│   ├── public/           # Web-optimized assets & thumbnails
+│   ├── public/
+│   │   └── images/       # Generated WebP sizes: small/ grid/ large/ full/
 │   ├── package.json      # Dependencies and scripts
 │   └── vite.config.ts    # Bundler config (base: './')
-├── run.bat               # Double-click on Windows to start the gallery instantly!
-├── sync_gallery.py       # Auto-sync new photos from gallery/ into the website
-└── .github/workflows/    # Automated GitHub Actions deployment
+├── .claude/skills/       # Claude Code skills
+│   ├── higgsfield/       # Higgsfield AI prompt writing
+│   └── instagram-ready/  # Instagram post/Story layouts
+├── sync_gallery.py       # Sync gallery/ into the website, then commit + push (redeploys)
+├── run.bat               # Start the local dev server
+├── visit.bat             # Open the live site
+└── .github/workflows/    # GitHub Pages deployment
 ```
 
 ---
