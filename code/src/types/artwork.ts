@@ -17,4 +17,21 @@ export interface Artwork {
   project?: ProjectInfo;
 }
 
+export interface ProjectConfig {
+  id: string;
+  title: string;
+  subtitle: string;
+  coverStem: string;
+}
+
+export interface ProjectSummary {
+  id: string;
+  title: string;
+  subtitle: string;
+  frameCount: number;
+  coverArtwork: Artwork;
+  previewArtworks: Artwork[];
+}
+
 export type GridCols = 1 | 2 | 3 | 4;
+export type ViewMode = 'gallery' | 'projects';

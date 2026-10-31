@@ -2,20 +2,23 @@
 """
 Sync & Watch Gallery Script
 ---------------------------
-- Synchronizes all photos from 'gallery/' (including project subfolders) into responsive WebP sizes in:
+- Synchronizes all photos from 'gallery/' into responsive WebP sizes in:
     code/public/images/{small,grid,large,full}/
   plus tiny base64 blur placeholders.
-- Supports Projects / Series:
-  * Subfolders inside gallery/ are automatically recognized as projects (e.g. gallery/The Hotel/).
-  * Common series in root gallery/ are automatically mapped to their respective project.
-  * Standalone photos remain single frames.
-- Accurately sorts photos by date newest first (combining filename timestamps,
-  local file modification times, and git commit history).
-- Cleans up and deletes any generated responsive images when a photo is removed from 'gallery/'.
+- Strictly supports exactly 3 projects/series:
+    1. The Taxi Driver (the-taxi-driver)
+    2. The Saxophonist (the-saxophonist)
+    3. The Hotel (the-hotel)
+  All other images remain standalone frames.
+- Accurately sorts photos by date newest first:
+    * Filename timestamp if present (YYYYMMDDHHMMSS)
+    * Git commit timestamp (preserves accurate ordering across local and CI builds)
+    * Local file mtime only for newly added, uncommitted files
+- Cleans up and deletes responsive images when a photo is removed from 'gallery/'.
 - Generates code/src/data/artworks.ts with ordered artwork and project metadata.
 - Commits and pushes to GitHub main branch to trigger GitHub Actions CI/CD redeployment.
 - When run with --watch, continuously monitors 'gallery/' for any added, deleted,
-  or modified photos/folders, and automatically syncs, commits, and deploys.
+  or modified photos, and automatically syncs, commits, and deploys.
 """
 
 import os
@@ -48,6 +51,27 @@ PLACEHOLDER_WIDTH = 24
 WEBP_QUALITY = 92
 VALID_EXTS = ('.jpg', '.jpeg', '.png', '.webp')
 
+PROJECTS_CONFIG = [
+    {
+        "id": "the-taxi-driver",
+        "title": "The Taxi Driver",
+        "subtitle": "A nocturnal three-act narrative of transit, ritual, and departure.",
+        "coverStem": "01_The_Taxi"
+    },
+    {
+        "id": "the-saxophonist",
+        "title": "The Saxophonist",
+        "subtitle": "Atmospheric studies of music, architecture, and solitude.",
+        "coverStem": "Blind_man_playing_saxophone_54d83e26_2K"
+    },
+    {
+        "id": "the-hotel",
+        "title": "The Hotel",
+        "subtitle": "Cinematic glimpses into transient spaces, owners, and secrets.",
+        "coverStem": "01_Hotel_Owner"
+    }
+]
+
 
 def is_fresh(dst, src):
     """Check if destination file exists and is at least as fresh as source."""
@@ -61,10 +85,11 @@ def get_git_commit_dates():
     """Extract latest git commit timestamps for all files in the repository."""
     try:
         out = subprocess.run(
-            ['git', 'log', '--name-only', '--format=COMMIT:%at'],
+            ['git', '-c', 'core.quotepath=false', 'log', '--name-only', '--format=COMMIT:%at'],
             cwd=BASE_DIR,
             capture_output=True,
             text=True,
+            encoding='utf-8',
             check=True
         ).stdout
         git_dates = {}
@@ -82,35 +107,30 @@ def get_git_commit_dates():
 
 def detect_project(rel_path, filename):
     """
-    Detect project info for an image:
-    1. If inside a subfolder (e.g. gallery/The Hotel/01.jpg) -> project is folder name.
-    2. If in root, detect known cinematic series.
-    Returns (project_id, project_title) or (None, None).
+    Detect project info for an image.
+    Strictly recognizes only the 3 canonical series:
+      1. The Taxi Driver (the-taxi-driver)
+      2. The Saxophonist (the-saxophonist)
+      3. The Hotel (the-hotel)
+    All other images return (None, None) as standalone frames.
     """
     parts = os.path.normpath(rel_path).split(os.sep)
     if len(parts) > 1:
-        folder = parts[0]
-        # Clean folder name (e.g. '01_The_Hotel' -> 'The Hotel')
-        clean_title = re.sub(r'^\d+[\W_]+', '', folder).replace('_', ' ').strip()
-        slug = re.sub(r'[^\w]+', '-', clean_title.lower()).strip('-')
-        return slug, clean_title
+        folder = parts[0].lower().replace('_', ' ').replace('-', ' ').strip()
+        if 'taxi' in folder:
+            return 'the-taxi-driver', 'The Taxi Driver'
+        if 'hotel' in folder:
+            return 'the-hotel', 'The Hotel'
+        if 'sax' in folder:
+            return 'the-saxophonist', 'The Saxophonist'
 
-    # Fallback pattern detection for loose root files
     lower = filename.lower()
-    if any(k in lower for k in ['hotel_owner', 'the_guest', 'the_keyhole']):
-        return 'the-hotel', 'The Hotel'
     if any(k in lower for k in ['the_taxi', 'the_preparation', 'the_burial']):
-        return 'the-taxi', 'The Taxi'
+        return 'the-taxi-driver', 'The Taxi Driver'
     if 'saxophone' in lower or 'saxophonist' in lower:
         return 'the-saxophonist', 'The Saxophonist'
-    if 'cleaner_' in lower:
-        return 'the-cleaner', 'The Cleaner'
-    if 'wide_environmental' in lower:
-        return 'environmental-studies', 'Environmental Studies'
-    if any(k in lower for k in ['diner_wide', 'gas_station', 'laundromat', 'motel.png', 'pier.png']):
-        return 'roadside-nocturnes', 'Roadside Nocturnes'
-    if 'phone_booth' in lower:
-        return 'phone-booth', 'The Phone Booth'
+    if any(k in lower for k in ['hotel_owner', 'the_guest', 'the_keyhole']):
+        return 'the-hotel', 'The Hotel'
 
     return None, None
 
@@ -119,9 +139,8 @@ def get_photo_timestamp(filename, filepath, git_dates=None):
     """
     Get the most accurate creation/addition timestamp for a photo (newest first):
     1. Timestamp in filename (e.g. YYYYMMDDHHMMSS)
-    2. Local file modification time (if freshly added/modified)
-    3. Git commit timestamp (vital for CI environments where mtime is checkout time)
-    4. Fallback to file mtime
+    2. Git commit timestamp (when file was added/committed in repo)
+    3. Local file modification time (only for newly added untracked files)
     """
     m = re.search(r'(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})', filename)
     if m:
@@ -134,23 +153,15 @@ def get_photo_timestamp(filename, filepath, git_dates=None):
         except Exception:
             pass
 
-    mtime = 0
-    try:
-        mtime = os.path.getmtime(filepath)
-    except OSError:
-        pass
-
-    git_ts = 0
     if git_dates:
         rel_git = os.path.relpath(filepath, BASE_DIR).replace('\\', '/')
-        git_ts = git_dates.get(rel_git, 0)
+        if rel_git in git_dates:
+            return git_dates[rel_git]
 
-    if git_ts > 0 and abs(mtime - git_ts) > 60:
-        if mtime > git_ts + 60:
-            return mtime
-        return git_ts
-
-    return mtime or git_ts or 0
+    try:
+        return os.path.getmtime(filepath)
+    except OSError:
+        return 0
 
 
 def get_gallery_snapshot():
@@ -184,15 +195,15 @@ def discover_photos():
             if fname.lower().endswith(VALID_EXTS) and not fname.startswith('.'):
                 if '(1)' in fname or ' (2)' in fname:
                     continue
-                full_path = os.path.join(root, fname)
-                rel_path = os.path.relpath(full_path, GALLERY_DIR)
-                pid, ptitle = detect_project(rel_path, fname)
+                fpath = os.path.join(root, fname)
+                rel_path = os.path.relpath(fpath, GALLERY_DIR)
+                project_id, project_title = detect_project(rel_path, fname)
                 photos.append({
-                    'filename': fname,
-                    'rel_path': rel_path,
-                    'full_path': full_path,
-                    'project_id': pid,
-                    'project_title': ptitle,
+                    "filename": fname,
+                    "rel_path": rel_path,
+                    "full_path": fpath,
+                    "project_id": project_id,
+                    "project_title": project_title
                 })
     return photos
 
@@ -215,7 +226,7 @@ def sync(push=True):
         if p['project_id']:
             project_counts[p['project_id']] = project_counts.get(p['project_id'], 0) + 1
 
-    # Order newest first based on accurate timestamp (with filename as secondary key for series)
+    # Order newest first based on accurate timestamp (with filename as secondary key)
     all_photos.sort(key=lambda p: (-get_photo_timestamp(p['filename'], p['full_path'], git_dates), p['filename']))
     print(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(all_photos)} photos in gallery/ across {len(project_counts)} projects")
 
@@ -277,7 +288,7 @@ def sync(push=True):
                 "height": h
             }
 
-            # Attach project info if this frame belongs to a project/series
+            # Attach project info if this frame belongs to one of the 3 projects
             if p['project_id']:
                 item_data["project"] = {
                     "id": p['project_id'],
@@ -309,9 +320,11 @@ def sync(push=True):
     shutil.rmtree(os.path.join(IMAGES_DIR, "frames"), ignore_errors=True)
 
     # Write updated TypeScript data file
-    ts_content = f"""import {{ Artwork }} from '../types/artwork';
+    ts_content = f"""import {{ Artwork, ProjectConfig }} from '../types/artwork';
 
 export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
+
+export const PROJECTS_CONFIG: ProjectConfig[] = {json.dumps(PROJECTS_CONFIG, indent=2)};
 """
     os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     with open(DATA_FILE, "w", encoding="utf-8") as f:
@@ -348,7 +361,8 @@ export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
         if deleted_count > 0:
             parts.append(f"-{deleted_count} removed")
         details = f" ({', '.join(parts)})" if parts else ""
-        commit_msg = f"feat(gallery): auto-sync {len(items)} frames with project metadata{details}"
+
+        commit_msg = f"feat(gallery): auto-sync {len(items)} frames with 3 projects{details}"
 
         git("commit", "-m", commit_msg)
         print(f"[OK] Committed: {commit_msg}")
@@ -377,7 +391,7 @@ def watch(debounce_delay=2.0):
     print("=" * 64)
     print(f"Watching directory: {GALLERY_DIR}")
     print("Any file added, deleted, or replaced will automatically:")
-    print("  1. Detect project membership (subfolder or series)")
+    print("  1. Detect project membership (The Taxi Driver, The Saxophonist, The Hotel)")
     print("  2. Sort all pictures by date (newest first)")
     print("  3. Update responsive WebP formats & placeholders")
     print("  4. Remove deleted artworks from the website")
