@@ -27,3 +27,4 @@ export function getProjectArtworks(projectId: string): Artwork[] {
     a.src.localeCompare(b.src)
   );
 }
+

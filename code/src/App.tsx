@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { ARTWORKS_DATA } from './data/artworks';
 import { GridCols, ViewMode } from './types/artwork';
 import { ArtworkGrid } from './components/ArtworkGrid';
@@ -8,10 +8,14 @@ import { ProjectHeader } from './components/ProjectHeader';
 import { TopNav } from './components/TopNav';
 import { ProjectsOverview } from './components/ProjectsOverview';
 import { getProjectSummaries, getProjectArtworks } from './utils/projects';
+import gsap from 'gsap';
+import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 
 export const App: React.FC = () => {
   const [gridCols, setGridCols] = useState<GridCols>(4);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const mainContentRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Initialize view mode and project from URL query params
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
@@ -57,6 +61,17 @@ export const App: React.FC = () => {
     const firstMatch = ARTWORKS_DATA.find((a) => a.project?.id === activeProjectId);
     return firstMatch?.project || null;
   }, [activeProjectId, projects]);
+
+  // GSAP View Transition when switching between Gallery, Projects, or Project Detail
+  const currentViewKey = activeProjectId || (viewMode === 'projects' ? 'projects-overview' : 'gallery');
+  useEffect(() => {
+    if (prefersReducedMotion || !mainContentRef.current) return;
+    gsap.fromTo(
+      mainContentRef.current,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+    );
+  }, [currentViewKey, prefersReducedMotion]);
 
   // Sync state with browser back/forward history
   useEffect(() => {
@@ -139,7 +154,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#ededed]">
-      {/* Global Minimal Top Bar */}
+      {/* Global Minimal Top Bar with GSAP animated sliding indicator */}
       <TopNav
         viewMode={activeProjectId ? 'projects' : viewMode}
         totalFrames={ARTWORKS_DATA.length}
@@ -149,7 +164,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main>
+      <main ref={mainContentRef}>
         {/* 1. Projects Overview View */}
         {viewMode === 'projects' && !activeProjectId && (
           <ProjectsOverview
@@ -160,7 +175,7 @@ export const App: React.FC = () => {
 
         {/* 2. Specific Project Frame View */}
         {activeProjectId && activeProjectInfo && (
-          <div className="animate-fadeIn">
+          <div>
             <ProjectHeader
               project={activeProjectInfo}
               onBack={handleBackToProjects}
@@ -177,7 +192,7 @@ export const App: React.FC = () => {
 
         {/* 3. All Frames Flat Gallery View */}
         {viewMode === 'gallery' && !activeProjectId && (
-          <div className="pt-6 sm:pt-8 animate-fadeIn">
+          <div className="pt-6 sm:pt-8">
             <ArtworkGrid
               key="all"
               artworks={currentArtworks}
@@ -196,7 +211,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Fullscreen Lightbox */}
+      {/* Fullscreen Lightbox with GSAP animations */}
       <ArtworkLightbox
         artwork={selectedArtwork}
         currentIndex={selectedIndex ?? 0}

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ProjectInfo } from '../types/artwork';
 import { ArrowLeft } from 'lucide-react';
+import gsap from 'gsap';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 interface ProjectHeaderProps {
   project: ProjectInfo;
@@ -13,8 +15,23 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
   onBack,
   backLabel = 'Back to Projects',
 }) => {
+  const headerRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    if (prefersReducedMotion || !headerRef.current) return;
+    gsap.fromTo(
+      headerRef.current,
+      { opacity: 0, y: -12 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+    );
+  }, [project.id, prefersReducedMotion]);
+
   return (
-    <header className="gallery-container pt-6 pb-4 sm:pt-8 sm:pb-6 flex items-center justify-between border-b border-[#181818] mb-4 sm:mb-6 select-none animate-fadeIn">
+    <header
+      ref={headerRef}
+      className="gallery-container pt-6 pb-4 sm:pt-8 sm:pb-6 flex items-center justify-between border-b border-[#181818] mb-4 sm:mb-6 select-none"
+    >
       {/* Back button */}
       <button
         onClick={onBack}
