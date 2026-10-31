@@ -45,7 +45,10 @@ VALID_EXTS = ('.jpg', '.jpeg', '.png', '.webp')
 
 def is_fresh(dst, src):
     """Check if destination file exists and is at least as fresh as source."""
-    return os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src)
+    if not os.path.exists(dst) or os.path.getsize(dst) == 0:
+        return False
+    # 5-second tolerance handles git checkout filesystem timestamp jitter
+    return os.path.getmtime(dst) >= (os.path.getmtime(src) - 5.0)
 
 
 def get_gallery_snapshot():
