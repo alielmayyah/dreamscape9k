@@ -4,9 +4,9 @@ import { GridCols, ViewMode } from './types/artwork';
 import { ArtworkGrid } from './components/ArtworkGrid';
 import { ArtworkLightbox } from './components/ArtworkLightbox';
 import { FloatingControls } from './components/FloatingControls';
-import { ProjectHeader } from './components/ProjectHeader';
 import { TopNav } from './components/TopNav';
 import { ProjectsOverview } from './components/ProjectsOverview';
+import { ProjectStoryView } from './components/ProjectStoryView';
 import { getProjectSummaries, getProjectArtworks } from './utils/projects';
 import gsap from 'gsap';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
@@ -60,6 +60,20 @@ export const App: React.FC = () => {
     }
     const firstMatch = ARTWORKS_DATA.find((a) => a.project?.id === activeProjectId);
     return firstMatch?.project || null;
+  }, [activeProjectId, projects]);
+
+  const activeProjectSubtitle = useMemo(() => {
+    if (!activeProjectId) return undefined;
+    const found = projects.find((p) => p.id === activeProjectId);
+    return found?.subtitle;
+  }, [activeProjectId, projects]);
+
+  const nextProject = useMemo(() => {
+    if (!activeProjectId || projects.length === 0) return null;
+    const currentIndex = projects.findIndex((p) => p.id === activeProjectId);
+    if (currentIndex === -1) return null;
+    const nextIdx = (currentIndex + 1) % projects.length;
+    return projects[nextIdx];
   }, [activeProjectId, projects]);
 
   // GSAP View Transition when switching between Gallery, Projects, or Project Detail
@@ -173,21 +187,18 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* 2. Specific Project Frame View */}
+        {/* 2. Specific Project Story View (Alternating PHOTO EMPTY / EMPTY PHOTO narrative) */}
         {activeProjectId && activeProjectInfo && (
-          <div>
-            <ProjectHeader
-              project={activeProjectInfo}
-              onBack={handleBackToProjects}
-              backLabel="Return to Projects"
-            />
-            <ArtworkGrid
-              key={activeProjectId}
-              artworks={currentArtworks}
-              gridCols={gridCols}
-              onSelectArtwork={(_, idx) => setSelectedIndex(idx)}
-            />
-          </div>
+          <ProjectStoryView
+            key={activeProjectId}
+            project={activeProjectInfo}
+            artworks={currentArtworks}
+            subtitle={activeProjectSubtitle}
+            onSelectArtwork={(_, idx) => setSelectedIndex(idx)}
+            onBack={handleBackToProjects}
+            onNextProject={nextProject ? () => handleSelectProject(nextProject.id) : undefined}
+            nextProjectTitle={nextProject?.title}
+          />
         )}
 
         {/* 3. All Frames Flat Gallery View */}
@@ -203,8 +214,8 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Floating Layout Controls (visible in Frames or inside a Project) */}
-      {(viewMode === 'gallery' || activeProjectId) && (
+      {/* Floating Layout Controls (visible only in flat Gallery view) */}
+      {viewMode === 'gallery' && !activeProjectId && (
         <FloatingControls
           gridCols={gridCols}
           onGridColsChange={setGridCols}
