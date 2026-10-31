@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Artwork } from '../types/artwork';
 import { useScrollLock } from '../hooks/useScrollLock';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 
 interface ArtworkLightboxProps {
   artwork: Artwork | null;
@@ -12,6 +12,8 @@ interface ArtworkLightboxProps {
   onNext: () => void;
   onPrev: () => void;
   neighbours: { prev: Artwork | null; next: Artwork | null };
+  onViewProject?: (projectId: string) => void;
+  isProjectScoped?: boolean;
 }
 
 export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
@@ -23,6 +25,8 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
   onNext,
   onPrev,
   neighbours,
+  onViewProject,
+  isProjectScoped = false,
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -153,11 +157,30 @@ export const ArtworkLightbox: React.FC<ArtworkLightboxProps> = ({
           className="w-auto h-auto max-w-[96vw] max-h-[90vh] object-contain pointer-events-auto rounded-[2px] transition-opacity duration-300"
         />
 
-        {/* Minimal Subtle Counter Only */}
-        <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center pointer-events-none">
+        {/* Minimal Subtle Counter & Project Action Button */}
+        <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center gap-2 px-4 pointer-events-none">
           <div className="px-3 py-1 bg-[#0f0f0f]/80 backdrop-blur-sm rounded border border-[#222] text-[10px] font-mono text-[#777] tracking-wider pointer-events-auto">
-            {currentIndex + 1} / {totalCount}
+            {isProjectScoped && artwork.project ? (
+              <span>{artwork.project.title.toUpperCase()} &middot; {currentIndex + 1} / {totalCount}</span>
+            ) : (
+              <span>{currentIndex + 1} / {totalCount}</span>
+            )}
           </div>
+
+          {!isProjectScoped && artwork.project && onViewProject && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewProject(artwork.project!.id);
+              }}
+              className="group flex items-center gap-1.5 px-3 py-1 bg-[#121212]/90 hover:bg-[#202020] active:scale-95 backdrop-blur-md rounded border border-[#262626] hover:border-[#444] text-[11px] font-mono text-[#cccccc] hover:text-[#ffffff] tracking-wide pointer-events-auto transition-all duration-200 cursor-pointer shadow-xl"
+              title={`View complete project: ${artwork.project.title}`}
+            >
+              <span>View Project: <strong className="font-semibold text-white">{artwork.project.title}</strong></span>
+              <span className="text-[#777]">({artwork.project.frameCount})</span>
+              <ArrowUpRight size={13} className="text-[#888] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
+          )}
         </div>
       </div>
     </div>

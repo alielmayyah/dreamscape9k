@@ -2,14 +2,20 @@
 """
 Sync & Watch Gallery Script
 ---------------------------
-- Synchronizes all photos from 'gallery/' into responsive WebP sizes in:
+- Synchronizes all photos from 'gallery/' (including project subfolders) into responsive WebP sizes in:
     code/public/images/{small,grid,large,full}/
   plus tiny base64 blur placeholders.
+- Supports Projects / Series:
+  * Subfolders inside gallery/ are automatically recognized as projects (e.g. gallery/The Hotel/).
+  * Common series in root gallery/ are automatically mapped to their respective project.
+  * Standalone photos remain single frames.
+- Accurately sorts photos by date newest first (combining filename timestamps,
+  local file modification times, and git commit history).
 - Cleans up and deletes any generated responsive images when a photo is removed from 'gallery/'.
-- Generates code/src/data/artworks.ts with ordered artwork metadata.
+- Generates code/src/data/artworks.ts with ordered artwork and project metadata.
 - Commits and pushes to GitHub main branch to trigger GitHub Actions CI/CD redeployment.
 - When run with --watch, continuously monitors 'gallery/' for any added, deleted,
-  or modified photos, and automatically syncs, commits, and deploys.
+  or modified photos/folders, and automatically syncs, commits, and deploys.
 """
 
 import os
@@ -51,22 +57,144 @@ def is_fresh(dst, src):
     return os.path.getmtime(dst) >= (os.path.getmtime(src) - 5.0)
 
 
+def get_git_commit_dates():
+    """Extract latest git commit timestamps for all files in the repository."""
+    try:
+        out = subprocess.run(
+            ['git', 'log', '--name-only', '--format=COMMIT:%at'],
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            check=True
+        ).stdout
+        git_dates = {}
+        current_ts = None
+        for line in out.splitlines():
+            line = line.strip()
+            if line.startswith('COMMIT:'):
+                current_ts = int(line.split(':')[1])
+            elif line and line not in git_dates and current_ts:
+                git_dates[line] = current_ts
+        return git_dates
+    except Exception:
+        return {}
+
+
+def detect_project(rel_path, filename):
+    """
+    Detect project info for an image:
+    1. If inside a subfolder (e.g. gallery/The Hotel/01.jpg) -> project is folder name.
+    2. If in root, detect known cinematic series.
+    Returns (project_id, project_title) or (None, None).
+    """
+    parts = os.path.normpath(rel_path).split(os.sep)
+    if len(parts) > 1:
+        folder = parts[0]
+        # Clean folder name (e.g. '01_The_Hotel' -> 'The Hotel')
+        clean_title = re.sub(r'^\d+[\W_]+', '', folder).replace('_', ' ').strip()
+        slug = re.sub(r'[^\w]+', '-', clean_title.lower()).strip('-')
+        return slug, clean_title
+
+    # Fallback pattern detection for loose root files
+    lower = filename.lower()
+    if any(k in lower for k in ['hotel_owner', 'the_guest', 'the_keyhole']):
+        return 'the-hotel', 'The Hotel'
+    if any(k in lower for k in ['the_taxi', 'the_preparation', 'the_burial']):
+        return 'the-taxi', 'The Taxi'
+    if 'saxophone' in lower or 'saxophonist' in lower:
+        return 'the-saxophonist', 'The Saxophonist'
+    if 'cleaner_' in lower:
+        return 'the-cleaner', 'The Cleaner'
+    if 'wide_environmental' in lower:
+        return 'environmental-studies', 'Environmental Studies'
+    if any(k in lower for k in ['diner_wide', 'gas_station', 'laundromat', 'motel.png', 'pier.png']):
+        return 'roadside-nocturnes', 'Roadside Nocturnes'
+    if 'phone_booth' in lower:
+        return 'phone-booth', 'The Phone Booth'
+
+    return None, None
+
+
+def get_photo_timestamp(filename, filepath, git_dates=None):
+    """
+    Get the most accurate creation/addition timestamp for a photo (newest first):
+    1. Timestamp in filename (e.g. YYYYMMDDHHMMSS)
+    2. Local file modification time (if freshly added/modified)
+    3. Git commit timestamp (vital for CI environments where mtime is checkout time)
+    4. Fallback to file mtime
+    """
+    m = re.search(r'(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})', filename)
+    if m:
+        try:
+            dt = datetime(
+                int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                int(m.group(4)), int(m.group(5)), int(m.group(6))
+            )
+            return dt.timestamp()
+        except Exception:
+            pass
+
+    mtime = 0
+    try:
+        mtime = os.path.getmtime(filepath)
+    except OSError:
+        pass
+
+    git_ts = 0
+    if git_dates:
+        rel_git = os.path.relpath(filepath, BASE_DIR).replace('\\', '/')
+        git_ts = git_dates.get(rel_git, 0)
+
+    if git_ts > 0 and abs(mtime - git_ts) > 60:
+        if mtime > git_ts + 60:
+            return mtime
+        return git_ts
+
+    return mtime or git_ts or 0
+
+
 def get_gallery_snapshot():
-    """Returns a dict of {filename: (mtime, size)} for all valid images in GALLERY_DIR."""
+    """Returns a dict of {rel_path: (mtime, size)} for all valid images in GALLERY_DIR recursively."""
     snapshot = {}
     if not os.path.exists(GALLERY_DIR):
         return snapshot
-    for entry in os.scandir(GALLERY_DIR):
-        if entry.is_file() and entry.name.lower().endswith(VALID_EXTS) and not entry.name.startswith('.'):
-            # Ignore Windows duplicate copy patterns like 'image (1).jpg'
-            if '(1)' in entry.name or ' (2)' in entry.name:
-                continue
-            try:
-                stat = entry.stat()
-                snapshot[entry.name] = (stat.st_mtime, stat.st_size)
-            except OSError:
-                pass
+    for root, _, files in os.walk(GALLERY_DIR):
+        for fname in files:
+            if fname.lower().endswith(VALID_EXTS) and not fname.startswith('.'):
+                if '(1)' in fname or ' (2)' in fname:
+                    continue
+                fpath = os.path.join(root, fname)
+                rel_path = os.path.relpath(fpath, GALLERY_DIR)
+                try:
+                    stat = os.stat(fpath)
+                    snapshot[rel_path] = (stat.st_mtime, stat.st_size)
+                except OSError:
+                    pass
     return snapshot
+
+
+def discover_photos():
+    """Discover all valid photos in gallery/ (including subfolders)."""
+    photos = []
+    if not os.path.exists(GALLERY_DIR):
+        return photos
+
+    for root, _, files in os.walk(GALLERY_DIR):
+        for fname in files:
+            if fname.lower().endswith(VALID_EXTS) and not fname.startswith('.'):
+                if '(1)' in fname or ' (2)' in fname:
+                    continue
+                full_path = os.path.join(root, fname)
+                rel_path = os.path.relpath(full_path, GALLERY_DIR)
+                pid, ptitle = detect_project(rel_path, fname)
+                photos.append({
+                    'filename': fname,
+                    'rel_path': rel_path,
+                    'full_path': full_path,
+                    'project_id': pid,
+                    'project_title': ptitle,
+                })
+    return photos
 
 
 def sync(push=True):
@@ -78,23 +206,27 @@ def sync(push=True):
     for folder, _ in SIZES:
         os.makedirs(os.path.join(IMAGES_DIR, folder), exist_ok=True)
 
-    # Collect valid photos
-    all_photos = [
-        f for f in os.listdir(GALLERY_DIR)
-        if f.lower().endswith(VALID_EXTS) and not f.startswith('.') and '(1)' not in f and ' (2)' not in f
-    ]
+    all_photos = discover_photos()
+    git_dates = get_git_commit_dates()
 
-    # Order newest first based on file modified time
-    all_photos.sort(key=lambda f: os.path.getmtime(os.path.join(GALLERY_DIR, f)), reverse=True)
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(all_photos)} photos in gallery/")
+    # Calculate frame counts per project
+    project_counts = {}
+    for p in all_photos:
+        if p['project_id']:
+            project_counts[p['project_id']] = project_counts.get(p['project_id'], 0) + 1
+
+    # Order newest first based on accurate timestamp (with filename as secondary key for series)
+    all_photos.sort(key=lambda p: (-get_photo_timestamp(p['filename'], p['full_path'], git_dates), p['filename']))
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(all_photos)} photos in gallery/ across {len(project_counts)} projects")
 
     items = []
     written = set()
     newly_processed = 0
 
-    for i, f in enumerate(all_photos):
-        src_path = os.path.join(GALLERY_DIR, f)
-        stem = re.sub(r'[^\w\.-]', '_', os.path.splitext(f)[0])
+    for i, p in enumerate(all_photos):
+        src_path = p['full_path']
+        fname = p['filename']
+        stem = re.sub(r'[^\w\.-]', '_', os.path.splitext(fname)[0])
 
         try:
             with Image.open(src_path) as raw_img:
@@ -133,7 +265,7 @@ def sync(push=True):
                 tiny.save(buf, "WEBP", quality=40)
                 placeholder = "data:image/webp;base64," + base64.b64encode(buf.getvalue()).decode()
 
-            items.append({
+            item_data = {
                 "id": f"frame-{i+1:03d}",
                 "title": f"Frame {i+1:03d}",
                 "src": srcset[-1][1],
@@ -143,10 +275,20 @@ def sync(push=True):
                 "aspectRatio": aspect,
                 "width": w,
                 "height": h
-            })
+            }
+
+            # Attach project info if this frame belongs to a project/series
+            if p['project_id']:
+                item_data["project"] = {
+                    "id": p['project_id'],
+                    "title": p['project_title'],
+                    "frameCount": project_counts[p['project_id']]
+                }
+
+            items.append(item_data)
 
         except Exception as e:
-            print(f"[WARN] Failed to process photo {f}: {e}")
+            print(f"[WARN] Failed to process photo {fname}: {e}")
 
     # Remove any generated images whose source photo was deleted from gallery/
     deleted_files = 0
@@ -191,13 +333,11 @@ export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
     try:
         git("add", "-A", "gallery", os.path.join("code", "public", "images"), os.path.join("code", "src", "data", "artworks.ts"))
 
-        # Check if anything is staged
         status_proc = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=BASE_DIR)
         if status_proc.returncode == 0:
             print("[OK] No gallery changes to commit.")
             return {"items": len(items), "committed": False}
 
-        # Analyze staged changes for an informative commit message
         staged_status = subprocess.run(["git", "status", "--porcelain"], cwd=BASE_DIR, capture_output=True, text=True).stdout
         added_count = len([line for line in staged_status.splitlines() if line.startswith("A") or "gallery/" in line and line.startswith("??")])
         deleted_count = len([line for line in staged_status.splitlines() if line.startswith("D")])
@@ -208,12 +348,11 @@ export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
         if deleted_count > 0:
             parts.append(f"-{deleted_count} removed")
         details = f" ({', '.join(parts)})" if parts else ""
-        commit_msg = f"feat(gallery): auto-sync {len(items)} frames{details}"
+        commit_msg = f"feat(gallery): auto-sync {len(items)} frames with project metadata{details}"
 
         git("commit", "-m", commit_msg)
         print(f"[OK] Committed: {commit_msg}")
 
-        # Pull rebase in case remote has recent commits
         try:
             subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, capture_output=True, text=True)
         except Exception:
@@ -230,7 +369,7 @@ export const ARTWORKS_DATA: Artwork[] = {json.dumps(items, indent=2)};
 
 def watch(debounce_delay=2.0):
     """
-    Continuously watch the gallery/ folder.
+    Continuously watch the gallery/ folder recursively.
     Whenever a photo is added, removed, or modified, automatically syncs and redeploys.
     """
     print("=" * 64)
@@ -238,13 +377,14 @@ def watch(debounce_delay=2.0):
     print("=" * 64)
     print(f"Watching directory: {GALLERY_DIR}")
     print("Any file added, deleted, or replaced will automatically:")
-    print("  1. Update responsive WebP formats & placeholders")
-    print("  2. Remove deleted artworks from the website")
-    print("  3. Commit and push changes to GitHub")
-    print("  4. Trigger GitHub Actions CI/CD to redeploy!")
+    print("  1. Detect project membership (subfolder or series)")
+    print("  2. Sort all pictures by date (newest first)")
+    print("  3. Update responsive WebP formats & placeholders")
+    print("  4. Remove deleted artworks from the website")
+    print("  5. Commit and push changes to GitHub")
+    print("  6. Trigger GitHub Actions CI/CD to redeploy!")
     print("=" * 64)
 
-    # Initial sync
     print("\n[INFO] Running initial sync...")
     sync(push=True)
     last_snapshot = get_gallery_snapshot()
@@ -277,7 +417,6 @@ def watch(debounce_delay=2.0):
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] Detected gallery change: {', '.join(change_desc)}")
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] Debouncing ({debounce_delay}s) for writes to complete...")
 
-                # Debounce loop: wait until files are stable
                 while True:
                     time.sleep(debounce_delay)
                     latest_snapshot = get_gallery_snapshot()
@@ -285,10 +424,9 @@ def watch(debounce_delay=2.0):
                         break
                     current_snapshot = latest_snapshot
 
-                # Verify newly added/modified images are accessible (not locked by copy operation)
                 all_readable = True
-                for fname in added | modified:
-                    fpath = os.path.join(GALLERY_DIR, fname)
+                for rel_path in added | modified:
+                    fpath = os.path.join(GALLERY_DIR, rel_path)
                     try:
                         with Image.open(fpath) as test_img:
                             test_img.verify()
@@ -299,7 +437,6 @@ def watch(debounce_delay=2.0):
                 if not all_readable:
                     time.sleep(1.0)
 
-                # Execute sync and deploy
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] Syncing and redeploying...")
                 sync(push=True)
                 last_snapshot = get_gallery_snapshot()
