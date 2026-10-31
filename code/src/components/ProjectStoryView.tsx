@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Artwork, ProjectInfo } from '../types/artwork';
-import { ArrowLeft, ArrowRight, Expand, Film } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Expand } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -38,13 +38,11 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
 
       rows.forEach((row, i) => {
         const photoCard = row.querySelector('.story-photo-card');
-        const captionEl = row.querySelector('.story-caption');
         const isPhotoLeft = i % 2 === 0;
 
-        // Skip animation for the very first item so it appears instantly above the fold
+        // The very first item is visible instantly above the fold
         if (i === 0) {
           if (photoCard) gsap.set(photoCard, { opacity: 1, x: 0, scale: 1 });
-          if (captionEl) gsap.set(captionEl, { opacity: 1, y: 0 });
           return;
         }
 
@@ -70,25 +68,6 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
             }
           );
         }
-
-        if (captionEl) {
-          gsap.fromTo(
-            captionEl,
-            { opacity: 0, y: 15 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              delay: 0.1,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: row,
-                start: 'top 88%',
-                once: true,
-              },
-            }
-          );
-        }
       });
     }, containerRef);
 
@@ -96,9 +75,9 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
   }, [artworks, prefersReducedMotion]);
 
   return (
-    <div ref={containerRef} className="min-h-screen pb-20">
-      {/* Compact, Integrated Project Top Bar - Minimal height to maximize viewport for images */}
-      <header className="gallery-container pt-3 pb-3 sm:pt-4 sm:pb-4 border-b border-[#181818] mb-4 sm:mb-6 select-none flex flex-wrap items-center justify-between gap-3">
+    <div ref={containerRef} className="min-h-screen pb-24">
+      {/* Sleek, Minimal Project Top Bar */}
+      <header className="gallery-container pt-3 pb-3 sm:pt-4 sm:pb-4 border-b border-[#181818] mb-6 sm:mb-8 select-none flex items-center justify-between gap-3">
         {/* Back Button */}
         <button
           onClick={onBack}
@@ -111,7 +90,7 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
           <span className="text-[#444444] text-[10px] hidden sm:inline">(Esc)</span>
         </button>
 
-        {/* Project Title & Counter (Compact Inline) */}
+        {/* Project Title (Refined Minimalist) */}
         <div className="flex items-center gap-2 sm:gap-3 text-center">
           <h1 className="text-sm sm:text-base font-mono font-medium tracking-widest text-[#f0f0f0] uppercase">
             {project.title}
@@ -127,29 +106,25 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
           )}
         </div>
 
-        {/* Story Indicator */}
-        <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#666666] tracking-wider uppercase">
-          <Film size={12} className="text-[#888888]" />
-          <span className="hidden sm:inline">Narrative Flow</span>
-        </div>
+        {/* Quiet Balance Spacer */}
+        <div className="w-16 hidden sm:block" aria-hidden="true" />
       </header>
 
-      {/* Alternating Story Beats: PHOTO EMPTY / EMPTY PHOTO */}
-      <div className="gallery-container space-y-12 sm:space-y-16 lg:space-y-20">
+      {/* Alternating Story Beats: PHOTO - PURE VOID / PURE VOID - PHOTO */}
+      <div className="gallery-container space-y-12 sm:space-y-16 lg:space-y-24">
         {artworks.map((artwork, idx) => {
           const isPhotoLeft = idx % 2 === 0;
           const sceneNum = String(idx + 1).padStart(2, '0');
-          const totalScenes = String(artworks.length).padStart(2, '0');
 
           return (
             <div
               key={artwork.id}
-              className="story-beat-row grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
+              className="story-beat-row grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center"
             >
               {/* Photo on LEFT (for Even Indices: 0, 2, 4...) */}
               {isPhotoLeft ? (
                 <>
-                  {/* Photo Column (8 cols = ~67% width, commanding presence) */}
+                  {/* Photo Column (~67% width) */}
                   <div className="lg:col-span-8">
                     <div
                       onClick={() => onSelectArtwork(artwork, idx)}
@@ -161,7 +136,7 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
                           onSelectArtwork(artwork, idx);
                         }
                       }}
-                      className="story-photo-card group relative aspect-[16/9] w-full overflow-hidden rounded-[3px] bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#444444] transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.9)]"
+                      className="story-photo-card group relative aspect-[16/9] w-full overflow-hidden rounded-[3px] bg-[#000000] border border-[#181818] hover:border-[#383838] transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.95)]"
                       aria-label={`View Scene ${sceneNum} fullscreen`}
                     >
                       <img
@@ -179,62 +154,22 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       />
 
-                      {/* Hover Expand Cue */}
+                      {/* Discreet Expand Cue on Hover */}
                       <div className="absolute bottom-3 right-3 p-2 rounded-full bg-[#000000]/70 backdrop-blur-md border border-[#333333] text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <Expand size={14} />
                       </div>
                     </div>
                   </div>
 
-                  {/* Empty / Editorial Accent Column (4 cols) on RIGHT */}
-                  <div className="story-caption lg:col-span-4 flex flex-col justify-center px-1 sm:px-4">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <span className="text-[12px] font-mono tracking-[0.25em] text-[#888888] uppercase">
-                        Scene // {sceneNum}
-                      </span>
-                      <span className="w-6 h-[1px] bg-[#2a2a2a]" />
-                      <span className="text-[10px] font-mono text-[#555555]">
-                        {sceneNum} / {totalScenes}
-                      </span>
-                    </div>
-
-                    <h2 className="text-base sm:text-lg font-light font-mono tracking-tight text-[#ededed] uppercase mb-1">
-                      Beat {sceneNum}
-                    </h2>
-
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-[#555555] tracking-widest uppercase">
-                      <span>{artwork.aspectRatio}</span>
-                      <span>&middot;</span>
-                      <span>{artwork.width} &times; {artwork.height}</span>
-                    </div>
-                  </div>
+                  {/* Pure Pitch-Black Void (4 cols) on RIGHT - 100% Silence */}
+                  <div className="hidden lg:block lg:col-span-4" aria-hidden="true" />
                 </>
               ) : (
                 <>
-                  {/* Empty / Editorial Accent Column (4 cols) on LEFT */}
-                  <div className="story-caption lg:col-span-4 order-2 lg:order-1 flex flex-col justify-center lg:items-end lg:text-right px-1 sm:px-4">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <span className="text-[10px] font-mono text-[#555555]">
-                        {sceneNum} / {totalScenes}
-                      </span>
-                      <span className="w-6 h-[1px] bg-[#2a2a2a]" />
-                      <span className="text-[12px] font-mono tracking-[0.25em] text-[#888888] uppercase">
-                        Scene // {sceneNum}
-                      </span>
-                    </div>
+                  {/* Pure Pitch-Black Void (4 cols) on LEFT - 100% Silence */}
+                  <div className="hidden lg:block lg:col-span-4 order-2 lg:order-1" aria-hidden="true" />
 
-                    <h2 className="text-base sm:text-lg font-light font-mono tracking-tight text-[#ededed] uppercase mb-1">
-                      Beat {sceneNum}
-                    </h2>
-
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-[#555555] tracking-widest uppercase">
-                      <span>{artwork.aspectRatio}</span>
-                      <span>&middot;</span>
-                      <span>{artwork.width} &times; {artwork.height}</span>
-                    </div>
-                  </div>
-
-                  {/* Photo Column (8 cols = ~67% width) on RIGHT */}
+                  {/* Photo Column (~67% width) on RIGHT */}
                   <div className="lg:col-span-8 order-1 lg:order-2">
                     <div
                       onClick={() => onSelectArtwork(artwork, idx)}
@@ -246,7 +181,7 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
                           onSelectArtwork(artwork, idx);
                         }
                       }}
-                      className="story-photo-card group relative aspect-[16/9] w-full overflow-hidden rounded-[3px] bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#444444] transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.9)]"
+                      className="story-photo-card group relative aspect-[16/9] w-full overflow-hidden rounded-[3px] bg-[#000000] border border-[#181818] hover:border-[#383838] transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.95)]"
                       aria-label={`View Scene ${sceneNum} fullscreen`}
                     >
                       <img
@@ -263,7 +198,7 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       />
 
-                      {/* Hover Expand Cue */}
+                      {/* Discreet Expand Cue on Hover */}
                       <div className="absolute bottom-3 right-3 p-2 rounded-full bg-[#000000]/70 backdrop-blur-md border border-[#333333] text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <Expand size={14} />
                       </div>
@@ -276,12 +211,8 @@ export const ProjectStoryView: React.FC<ProjectStoryViewProps> = ({
         })}
       </div>
 
-      {/* End of Story Coda */}
-      <footer className="gallery-container max-w-xl mx-auto pt-12 sm:pt-16 text-center border-t border-[#151515] mt-16 sm:mt-24">
-        <p className="text-[11px] font-mono tracking-[0.3em] uppercase text-[#555555] mb-5">
-          &mdash; End of Narrative Sequence &mdash;
-        </p>
-
+      {/* Minimal Story Coda */}
+      <footer className="gallery-container max-w-xl mx-auto pt-16 sm:pt-20 text-center border-t border-[#151515] mt-16 sm:mt-24">
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={onBack}
