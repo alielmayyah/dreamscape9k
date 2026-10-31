@@ -14,7 +14,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -30,7 +30,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -46,7 +46,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -62,7 +62,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -78,7 +78,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -94,7 +94,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -110,7 +110,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -376,7 +376,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "project": {
       "id": "the-saxophonist",
       "title": "The Saxophonist",
-      "frameCount": 11
+      "frameCount": 8
     }
   },
   {
@@ -465,12 +465,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "alt": "Cinematic frame 036",
     "aspectRatio": "16:9",
     "width": 2752,
-    "height": 1536,
-    "project": {
-      "id": "the-saxophonist",
-      "title": "The Saxophonist",
-      "frameCount": 11
-    }
+    "height": 1536
   },
   {
     "id": "frame-037",
@@ -481,12 +476,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "alt": "Cinematic frame 037",
     "aspectRatio": "16:9",
     "width": 2752,
-    "height": 1536,
-    "project": {
-      "id": "the-saxophonist",
-      "title": "The Saxophonist",
-      "frameCount": 11
-    }
+    "height": 1536
   },
   {
     "id": "frame-038",
@@ -497,12 +487,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     "alt": "Cinematic frame 038",
     "aspectRatio": "16:9",
     "width": 2752,
-    "height": 1536,
-    "project": {
-      "id": "the-saxophonist",
-      "title": "The Saxophonist",
-      "frameCount": 11
-    }
+    "height": 1536
   },
   {
     "id": "frame-039",

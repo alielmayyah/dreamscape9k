@@ -7,7 +7,7 @@ Sync & Watch Gallery Script
   plus tiny base64 blur placeholders.
 - Strictly supports exactly 3 projects/series:
     1. The Taxi Driver (the-taxi-driver)
-    2. The Saxophonist (the-saxophonist)
+    2. The Saxophonist (the-saxophonist) - strictly the blind dark man playing the saxophone
     3. The Hotel (the-hotel)
   All other images remain standalone frames.
 - Accurately sorts photos by date newest first:
@@ -110,7 +110,7 @@ def detect_project(rel_path, filename):
     Detect project info for an image.
     Strictly recognizes only the 3 canonical series:
       1. The Taxi Driver (the-taxi-driver)
-      2. The Saxophonist (the-saxophonist)
+      2. The Saxophonist (the-saxophonist) - strictly the blind dark man series
       3. The Hotel (the-hotel)
     All other images return (None, None) as standalone frames.
     """
@@ -121,13 +121,13 @@ def detect_project(rel_path, filename):
             return 'the-taxi-driver', 'The Taxi Driver'
         if 'hotel' in folder:
             return 'the-hotel', 'The Hotel'
-        if 'sax' in folder:
+        if 'blind' in folder and 'sax' in folder:
             return 'the-saxophonist', 'The Saxophonist'
 
     lower = filename.lower()
     if any(k in lower for k in ['the_taxi', 'the_preparation', 'the_burial']):
         return 'the-taxi-driver', 'The Taxi Driver'
-    if 'saxophone' in lower or 'saxophonist' in lower:
+    if 'blind_man_playing_saxophone' in lower:
         return 'the-saxophonist', 'The Saxophonist'
     if any(k in lower for k in ['hotel_owner', 'the_guest', 'the_keyhole']):
         return 'the-hotel', 'The Hotel'
